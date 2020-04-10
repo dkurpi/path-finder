@@ -18,14 +18,23 @@
   line-height: 40px;
   user-select: none;
   cursor: pointer;
-  transition: 0.5s;
-
+  transition: 0.2s;
 }
 .pole:hover {
   background-color: #aaa;
 }
 .wall {
   background-color: rgb(211, 209, 209);
-  transition: 0.5s;
+  transition: 0.2s;
   transform: scale(0.5);
+}
+
+.target {
+  border: 2px solid red;
+  transition: 0.2s;
+}
+
+.start {
+  border: 2px solid rgb(50, 255, 50);
+  transition: 0.5s;
 }

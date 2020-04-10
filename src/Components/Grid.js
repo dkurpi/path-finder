@@ -10,6 +10,11 @@ export default class Grid extends Component {
     isPressed: false,
   };
 
+  runScript = (array) => {
+    console.log("run");
+  };
+
+  ////////////Obsługa grida
   defaultGrid = () => {
     const columns = 20;
     const rows = 30;
@@ -18,10 +23,21 @@ export default class Grid extends Component {
     for (let x = 0; x < columns; x++) {
       array[x] = Array(rows);
       for (let y = 0; y < rows; y++) {
-        const pole = { isWall: false, y: x, x: y };
+        const pole = {
+          isWall: false,
+          y: x,
+          x: y,
+          isTarget: false,
+          isStart: false,
+          distance: Infinity,
+        };
         array[x][y] = pole;
       }
     }
+    array[10][26].isTarget = true;
+    array[6][10].isStart = true;
+    array[6][10].distance = 0;
+    console.log(array);
     return array;
   };
 
@@ -35,6 +51,7 @@ export default class Grid extends Component {
 
   targetPosition = (y, x) => {
     const { array } = this.state;
+
     array[y][x].isWall = true;
     console.log(y, x);
     this.setState({
@@ -45,9 +62,6 @@ export default class Grid extends Component {
   componentDidMount() {
     this.startGrid();
   }
-  runScript = () => {
-    console.log("run");
-  };
 
   render() {
     const { isLoaded, array, isPressed } = this.state;
