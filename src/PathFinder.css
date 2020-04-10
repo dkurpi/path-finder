@@ -1,0 +1,31 @@
+.menu {
+  margin: 2em 0;
+}
+.gridContainer {
+  display: flex;
+  width: 1200px;
+  height: 800px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+}
+.pole {
+  height: 40px;
+  width: 40px;
+  border: 1px solid rgb(107, 107, 107);
+  font-size: 9px;
+  color: rgb(107, 107, 107);
+  line-height: 40px;
+  user-select: none;
+  cursor: pointer;
+  transition: 0.5s;
+
+}
+.pole:hover {
+  background-color: #aaa;
+}
+.wall {
+  background-color: rgb(211, 209, 209);
+  transition: 0.5s;
+  transform: scale(0.5);
+}
