@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import Position from "./Position.js";
 import Menu from "./Menu.js";
+import pop1 from "../Sounds/pop1.mp3";
+import pop2 from "../Sounds/pop2.mp3";
+import pop3 from "../Sounds/pop3.mp3";
 
 export default class Grid extends Component {
   state = {
@@ -28,6 +31,11 @@ export default class Grid extends Component {
       this.animate(visitedNodes, "isAnimated", pathNodes);
     }
   };
+
+  audio1 = new Audio(pop1);
+  audio2 = new Audio(pop2);
+  audio3 = new Audio(pop3);
+
   /////////////algo
   backToStartArray = (finishNode) => {
     const path = [];
@@ -152,7 +160,8 @@ export default class Grid extends Component {
       else
         setTimeout(() => {
           pathAnimation(i);
-        }, 50 * i);
+          nodes.length - 1 === i ? this.audio3.play() : this.audio2.play();
+        }, 100 * i);
     }
 
     this.setState({
@@ -208,6 +217,7 @@ export default class Grid extends Component {
     ) {
       array[y][x].isWall = !array[y][x].isWall;
       this.runScript();
+      this.audio1.play();
     } else {
       const lastPressed = array[y][x].isTarget
         ? "endPosition"
