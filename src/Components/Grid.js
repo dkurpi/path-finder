@@ -8,8 +8,8 @@ export default class Grid extends Component {
     isLoaded: false,
     isClicked: false,
     isPressed: false,
-    startPosition: { x: 2, y: 5 },
-    endPosition: { x: 25, y: 16 },
+    startPosition: { x: 5, y: 8 },
+    endPosition: { x: 20, y: 12 },
   };
 
   runScript = () => {
@@ -46,10 +46,13 @@ export default class Grid extends Component {
     while (unVisitedArray.length) {
       this.sortArrayByDistance(unVisitedArray);
       currentPos = unVisitedArray.shift();
+      if (currentPos.distance === Infinity) {
+        return VisitedArray;
+      }
       VisitedArray.push(currentPos);
       arrayBufor[currentPos.y][currentPos.x].isVisited = true;
       if (arrayBufor[currentPos.y][currentPos.x].isWall === true) continue;
-      if (arrayBufor[currentPos.y][currentPos.x].distance === Infinity) return  alert("Brak ścieżki");
+
       if (currentPos.isTarget) {
         this.setState({ array: arrayBufor });
         return VisitedArray;
@@ -102,8 +105,17 @@ export default class Grid extends Component {
         this.setState({
           grid,
         });
-        if (i === nodes.length - 1) this.animatePath(pathNodes, "isPath");
-      }, 35 * i);
+        if (i === nodes.length - 1) {
+          console.log(
+            pathNodes[0].isTarget,
+            pathNodes,
+            pathNodes.length - 1
+          );
+          pathNodes[0].isTarget
+            ? this.animatePath(pathNodes, "isPath")
+            : alert("Brak rozwiązań");
+        }
+      }, 25 * i);
     }
   }
 
@@ -116,7 +128,7 @@ export default class Grid extends Component {
         this.setState({
           grid,
         });
-      }, 35 * i);
+      }, 60 * i);
     }
   }
 
