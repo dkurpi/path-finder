@@ -9,6 +9,8 @@ export default function Position(props) {
     wall: obj.isWall,
     target: obj.isTarget,
     start: obj.isStart,
+    visited: obj.isAnimated || obj.isPath,
+    path: obj.isPath,
   });
 
   return (
@@ -19,7 +21,7 @@ export default function Position(props) {
       }}
       className={clName}
     >
-      {y},{x}
+      {obj.distance}
     </div>
   );
 }

@@ -12,29 +12,36 @@
 .pole {
   height: 40px;
   width: 40px;
-  border: 1px solid rgb(107, 107, 107);
   font-size: 9px;
   color: rgb(107, 107, 107);
   line-height: 40px;
   user-select: none;
   cursor: pointer;
   transition: 0.2s;
+  border: 1px solid rgba(86, 81, 94, 0.205);
 }
 .pole:hover {
-  background-color: #aaa;
+  /* background-color: #aaa; */
 }
 .wall {
   background-color: rgb(211, 209, 209);
   transition: 0.2s;
-  transform: scale(0.5);
+  transform: scale(1);
 }
-
+.visited {
+  border: 1px solid rgb(223, 224, 223);
+  transform: scale(0.7);
+}
 .target {
-  border: 2px solid red;
+  background-color: red;
   transition: 0.2s;
 }
 
 .start {
-  border: 2px solid rgb(50, 255, 50);
+  background-color: rgb(50, 255, 50);
   transition: 0.5s;
+}
+
+.path {
+  background-color: yellowgreen;
 }

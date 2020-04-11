@@ -8,18 +8,122 @@ export default class Grid extends Component {
     isLoaded: false,
     isClicked: false,
     isPressed: false,
+    startPosition: { x: 10, y: 5 },
+    endPosition: { x: 14, y: 9 },
   };
 
-  runScript = (array) => {
-    console.log("run");
+  runScript = () => {
+    const { array } = this.state;
+    const visitedNodes = this.dijkstra(array);
+    const finishNode = visitedNodes[visitedNodes.length - 1];
+    const pathNodes = this.backToStartArray(finishNode);
+    this.animate(visitedNodes, "isAnimated", pathNodes);
+  };
+
+  backToStartArray = (finishNode) => {
+    const path = [];
+    let node = finishNode;
+    while (node.prevNode !== undefined) {
+      path.push(node);
+      node = node.prevNode;
+    }
+    console.log(path);
+    return path;
+  };
+
+  dijkstra = (array1) => {
+    const arrayBufor = array1.slice();
+    const flatArray = arrayBufor.flat();
+
+    const VisitedArray = [];
+    const unVisitedArray = flatArray;
+
+    this.sortArrayByDistance(unVisitedArray);
+    let currentPos = unVisitedArray.shift();
+    let neighbours = this.neighbours(currentPos, arrayBufor);
+    arrayBufor[currentPos.y][currentPos.x].isVisited = true;
+
+    while (unVisitedArray.length) {
+      this.sortArrayByDistance(unVisitedArray);
+      currentPos = unVisitedArray.shift();
+      VisitedArray.push(currentPos);
+      arrayBufor[currentPos.y][currentPos.x].isVisited = true;
+      if (currentPos.isTarget) {
+        this.setState({ array: arrayBufor });
+        return VisitedArray;
+      }
+      neighbours = this.neighbours(currentPos, arrayBufor);
+    }
+    console.log("juz2");
+  };
+
+  sortArrayByDistance = (array) => {
+    array.sort((a, b) => a.distance - b.distance);
+  };
+
+  neighbours = (obj, array) => {
+    const neighbours = [];
+
+    if (obj.y < array.length - 1) {
+      neighbours.push(array[obj.y + 1][obj.x]);
+    }
+    if (obj.x > 0) {
+      neighbours.push(array[obj.y][obj.x - 1]);
+    }
+    if (obj.y > 0) {
+      neighbours.push(array[obj.y - 1][obj.x]);
+    }
+    if (obj.x < array[obj.y].length - 1) {
+      neighbours.push(array[obj.y][obj.x + 1]);
+    }
+
+    const neighboursFiltered = neighbours.filter(
+      (neighbour) => !neighbour.isVisited
+    );
+    console.log(neighboursFiltered);
+
+    for (const item of neighboursFiltered) {
+      array[item.y][item.x].distance = obj.distance + 1;
+      array[item.y][item.x].prevNode = obj;
+    }
+
+    return neighboursFiltered;
   };
 
   ////////////Obsługa grida
+
+  animate(nodes, type, pathNodes) {
+    for (let i = 0; i < nodes.length; i++) {
+      setTimeout(() => {
+        const grid = [...this.state.array.slice()];
+        grid[nodes[i].y][nodes[i].x][type] = true;
+
+        this.setState({
+          grid,
+        });
+        if (i === nodes.length -1) this.animatePath(pathNodes, "isPath");
+      }, 35 * i);
+    }
+  }
+
+  animatePath(nodes, type) {
+    for (let i = 0; i < nodes.length; i++) {
+      setTimeout(() => {
+        const grid = [...this.state.array.slice()];
+        grid[nodes[i].y][nodes[i].x][type] = true;
+
+        this.setState({
+          grid,
+        });
+      }, 35 * i);
+    }
+  }
+
   defaultGrid = () => {
     const columns = 20;
     const rows = 30;
 
-    const array = Array(rows);
+    const array = Array(columns);
     for (let x = 0; x < columns; x++) {
       array[x] = Array(rows);
       for (let y = 0; y < rows; y++) {
@@ -28,21 +132,28 @@ export default class Grid extends Component {
           y: x,
           x: y,
           isTarget: false,
+          isAnimated: false,
           isStart: false,
+          isVisited: false,
+          isPath: false,
           distance: Infinity,
+          prevNode: {},
         };
         array[x][y] = pole;
       }
     }
-    array[10][26].isTarget = true;
-    array[6][10].isStart = true;
-    array[6][10].distance = 0;
+
     console.log(array);
     return array;
   };
 
   startGrid = () => {
     const array = this.defaultGrid();
+    const { startPosition, endPosition } = this.state;
+    array[endPosition.y][endPosition.x].isTarget = true;
+    array[startPosition.y][startPosition.x].isStart = true;
+    array[startPosition.y][startPosition.x].distance = 0;
+
     this.setState({
       array,
       isLoaded: true,
@@ -50,9 +161,9 @@ export default class Grid extends Component {
   };
 
   targetPosition = (y, x) => {
-    const { array } = this.state;
+    const array = this.state.array.slice();
 
-    array[y][x].isWall = true;
+    array[y][x].isWall = !array[y][x].isWall;
     console.log(y, x);
     this.setState({
       array,
@@ -88,6 +199,9 @@ export default class Grid extends Component {
             this.setState({ isPressed: true });
           }}
           onMouseUp={() => {
+            this.setState({ isPressed: false });
+          }}
+          onMouseLeave={() => {
             this.setState({ isPressed: false });
           }}
           className="gridContainer"
