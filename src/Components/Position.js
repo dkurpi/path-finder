@@ -26,7 +26,7 @@ export default function Position(props) {
       }}
       className={clName}
     >
-      {obj.isAnimated ? obj.distance : null}
+      {obj.isAnimated && !obj.isWall? obj.distance : null}
     </div>
   );
 }

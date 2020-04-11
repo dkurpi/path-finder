@@ -8,14 +8,13 @@ export default class Grid extends Component {
     isLoaded: false,
     isClicked: false,
     isPressed: false,
-    startPosition: { x: 10, y: 5 },
-    endPosition: { x: 14, y: 9 },
+    startPosition: { x: 2, y: 5 },
+    endPosition: { x: 25, y: 16 },
   };
 
   runScript = () => {
     const { array } = this.state;
     const visitedNodes = this.dijkstra(array);
-    console.log(array, visitedNodes);
     const finishNode = visitedNodes[visitedNodes.length - 1];
     const pathNodes = this.backToStartArray(finishNode);
     this.animate(visitedNodes, "isAnimated", pathNodes);
@@ -49,6 +48,8 @@ export default class Grid extends Component {
       currentPos = unVisitedArray.shift();
       VisitedArray.push(currentPos);
       arrayBufor[currentPos.y][currentPos.x].isVisited = true;
+      if (arrayBufor[currentPos.y][currentPos.x].isWall === true) continue;
+      if (arrayBufor[currentPos.y][currentPos.x].distance === Infinity) return  alert("Brak ścieżki");
       if (currentPos.isTarget) {
         this.setState({ array: arrayBufor });
         return VisitedArray;
@@ -81,7 +82,6 @@ export default class Grid extends Component {
     const neighboursFiltered = neighbours.filter(
       (neighbour) => !neighbour.isVisited
     );
-    console.log(neighboursFiltered);
 
     for (const item of neighboursFiltered) {
       array[item.y][item.x].distance = obj.distance + 1;
