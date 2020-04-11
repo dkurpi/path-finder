@@ -9,7 +9,7 @@ export default function Position(props) {
     wall: obj.isWall,
     target: obj.isTarget,
     start: obj.isStart,
-    visited: obj.isAnimated || obj.isPath,
+    visited: obj.isAnimated,
     path: obj.isPath,
   });
 
@@ -21,7 +21,7 @@ export default function Position(props) {
       }}
       className={clName}
     >
-      {obj.distance}
+      {obj.isAnimated? obj.distance : null}
     </div>
   );
 }

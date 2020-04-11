@@ -12,7 +12,7 @@
 .pole {
   height: 40px;
   width: 40px;
-  font-size: 9px;
+  font-size: 17px;
   color: rgb(107, 107, 107);
   line-height: 40px;
   user-select: none;
@@ -30,7 +30,7 @@
 }
 .visited {
   border: 1px solid rgb(223, 224, 223);
-  transform: scale(0.7);
+  transform: scale(0.9);
 }
 .target {
   background-color: red;
@@ -44,4 +44,5 @@
 
 .path {
   background-color: yellowgreen;
+  color: white;
 }
