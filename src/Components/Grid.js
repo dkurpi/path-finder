@@ -5,8 +5,8 @@ import Menu from "./Menu.js";
 export default class Grid extends Component {
   state = {
     array: [1, 2, 3, 5, 6, 7],
-    rows: 60,
-    columns: 40,
+    rows: 30,
+    columns: 20,
     isLoaded: false,
     isClicked: false,
     isPressed: false,
