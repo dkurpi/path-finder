@@ -15,6 +15,7 @@ export default class Grid extends Component {
   runScript = () => {
     const { array } = this.state;
     const visitedNodes = this.dijkstra(array);
+    console.log(array, visitedNodes);
     const finishNode = visitedNodes[visitedNodes.length - 1];
     const pathNodes = this.backToStartArray(finishNode);
     this.animate(visitedNodes, "isAnimated", pathNodes);
@@ -31,7 +32,7 @@ export default class Grid extends Component {
     return path;
   };
 
-  dijkstra = (array1) => {
+  dijkstra(array1) {
     const arrayBufor = array1.slice();
     const flatArray = arrayBufor.flat();
 
@@ -55,7 +56,7 @@ export default class Grid extends Component {
       neighbours = this.neighbours(currentPos, arrayBufor);
     }
     console.log("juz2");
-  };
+  }
 
   sortArrayByDistance = (array) => {
     array.sort((a, b) => a.distance - b.distance);
@@ -101,7 +102,7 @@ export default class Grid extends Component {
         this.setState({
           grid,
         });
-        if (i === nodes.length -1) this.animatePath(pathNodes, "isPath");
+        if (i === nodes.length - 1) this.animatePath(pathNodes, "isPath");
       }, 35 * i);
     }
   }

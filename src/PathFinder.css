@@ -29,12 +29,13 @@
   transform: scale(1);
 }
 .visited {
-  border: 1px solid rgb(223, 224, 223);
+  border: 1px solid rgb(133, 133, 133);
   transform: scale(0.9);
 }
 .target {
   background-color: red;
   transition: 0.2s;
+  color: white;
 }
 
 .start {
@@ -43,6 +44,23 @@
 }
 
 .path {
-  background-color: yellowgreen;
+  background-color: rgba(51, 255, 0, 0.801);
+  border-radius: 20px;
+
+  transform: scale(0.7);
   color: white;
+}
+
+.start.path {
+  background-color: rgb(50, 255, 50);
+  transform: scale(1);
+  border-radius: 20px;
+  transition: 0.5s;
+}
+
+.target.path {
+  background-color: red;
+  transform: scale(1);
+  border-radius: 20px;
+  transition: 0.5s;
 }
