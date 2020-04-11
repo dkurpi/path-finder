@@ -7,8 +7,11 @@ export default function Menu(props) {
       <button onClick={() => props.runScript()} class="button is-light">
         Run Script
       </button>
+      <button onClick={() => props.clearPath()} class="button is-danger">
+        Clear 
+      </button>
       <button onClick={() => props.clear()} class="button is-danger">
-        Clear
+        Clear All
       </button>
     </div>
   );
