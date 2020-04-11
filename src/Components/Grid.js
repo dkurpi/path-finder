@@ -12,17 +12,21 @@ export default class Grid extends Component {
     isPressed: false,
     isPointPressed: false,
     lastPressed: "startPosition",
+    wasAnimated: false,
+    isStarted: false,
     startPosition: { x: 5, y: 8 },
     endPosition: { x: 20, y: 12 },
   };
 
   runScript = () => {
+    const { array, startPosition, endPosition, isStarted } = this.state;
     this.clearPath();
-    const { array, startPosition, endPosition } = this.state;
-    const visitedNodes = this.dijkstra(array, startPosition, endPosition);
-    const finishNode = visitedNodes[visitedNodes.length - 1];
-    const pathNodes = this.backToStartArray(finishNode);
-    this.animate(visitedNodes, "isAnimated", pathNodes);
+    if (isStarted) {
+      const visitedNodes = this.dijkstra(array, startPosition, endPosition);
+      const finishNode = visitedNodes[visitedNodes.length - 1];
+      const pathNodes = this.backToStartArray(finishNode);
+      this.animate(visitedNodes, "isAnimated", pathNodes);
+    }
   };
   /////////////algo
   backToStartArray = (finishNode) => {
@@ -56,7 +60,11 @@ export default class Grid extends Component {
       }
       VisitedArray.push(currentPos);
       arrayBufor[currentPos.y][currentPos.x].isVisited = true;
-      if (arrayBufor[currentPos.y][currentPos.x].isWall === true) continue;
+      if (
+        arrayBufor[currentPos.y][currentPos.x].isWall === true &&
+        !arrayBufor[currentPos.y][currentPos.x].isTarget
+      )
+        continue;
 
       if (currentPos.isTarget) {
         this.setState({ array: arrayBufor });
@@ -106,9 +114,11 @@ export default class Grid extends Component {
       const grid = [...this.state.array.slice()];
       grid[nodes[i].y][nodes[i].x][type] = true;
 
-      // this.setState({
-      //   grid,
-      // });
+      this.setState({
+        // grid,
+        wasAnimated: true,
+      });
+
       if (i === nodes.length - 1) {
         pathNodes[0].isTarget
           ? this.animatePath(pathNodes, "isPath")
@@ -116,22 +126,27 @@ export default class Grid extends Component {
               grid,
             });
       }
+
       // }, 5 * i);
     }
   }
 
-  animatePath(nodes, type) {
-    for (let i = 0; i < nodes.length; i++) {
-      setTimeout(() => {
-        const grid = [...this.state.array.slice()];
-        grid[nodes[i].y][nodes[i].x][type] = true;
+  animatePath = (nodes, type) => {
+    const pathAnimation = (i) => {
+      const grid = [...this.state.array.slice()];
+      grid[nodes[i].y][nodes[i].x][type] = true;
 
-        this.setState({
-          grid,
-        });
-      }, 30 * i);
+      this.setState({
+        grid,
+        wasAnimated: true,
+      });
+    };
+    console.log(this.state.wasAnimated);
+    for (let i = 0; i < nodes.length; i++) {
+      if (this.state.wasAnimated) pathAnimation(i);
+      else setTimeout(pathAnimation(i), 30 * i);
     }
-  }
+  };
   //////////////reset default
   defaultGrid = () => {
     const { columns, rows } = this.state;
@@ -186,7 +201,6 @@ export default class Grid extends Component {
         : array[y][x].isStart
         ? "startPosition"
         : this.state.lastPressed;
-      console.log(this.state.endPosition, this.state.startPosition);
       this.setState(
         {
           [lastPressed]: { x: x, y: y },
@@ -196,33 +210,10 @@ export default class Grid extends Component {
         () => {
           this.modifyGrid("isTarget", false);
           this.modifyGrid("isStart", false);
+          this.runScript();
         }
       );
     }
-
-    // else if (array[y][x].isTarget) {
-    //   console.log(y, x);
-    //   this.setState(
-    //     {
-    //       endPosition: { x: x, y: y },
-    //       isPointPressed: true,
-    //     },
-    //     () => {
-    //       this.modifyGrid("isTarget", false);
-    //     }
-    //   );
-    // } else if (array[y][x].isStart) {
-    //   console.log(y, x);
-    //   this.setState(
-    //     {
-    //       startPosition: { x: x, y: y },
-    //       isPointPressed: true,
-    //     },
-    //     () => {
-    //       this.modifyGrid("isStart", false);
-    //     }
-    //   );
-    // }
 
     this.setState({
       array,
@@ -262,7 +253,6 @@ export default class Grid extends Component {
   render() {
     const { isLoaded, array, isPressed } = this.state;
     if (!isLoaded) return <h5>Loading..</h5>;
-    console.log(array);
     const grid = array.map((row, indexRow) =>
       row.map((properties, indexColumn) => (
         <Position
@@ -278,9 +268,30 @@ export default class Grid extends Component {
     return (
       <>
         <Menu
-          runScript={this.runScript}
-          clear={this.startGrid}
-          clearPath={this.clearPath}
+          runScript={() => {
+            this.setState(
+              {
+                isStarted: true,
+              },
+              () => {
+                this.runScript();
+              }
+            );
+          }}
+          clear={() => {
+            this.setState({
+              isStarted: false,
+              wasAnimated: false,
+            });
+            this.startGrid();
+          }}
+          clearPath={() => {
+            this.setState({
+              isStarted: false,
+              wasAnimated: false,
+            });
+            this.clearPath();
+          }}
         />
 
         <div
