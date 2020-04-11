@@ -5,8 +5,8 @@ import Menu from "./Menu.js";
 export default class Grid extends Component {
   state = {
     array: [1, 2, 3, 5, 6, 7],
-    rows: 30,
-    columns: 20,
+    rows: 60,
+    columns: 40,
     isLoaded: false,
     isClicked: false,
     isPressed: false,
@@ -193,9 +193,10 @@ export default class Grid extends Component {
       !array[y][x].isTarget &&
       !array[y][x].isStart &&
       !this.state.isPointPressed
-    )
+    ) {
       array[y][x].isWall = !array[y][x].isWall;
-    else {
+      this.runScript();
+    } else {
       const lastPressed = array[y][x].isTarget
         ? "endPosition"
         : array[y][x].isStart
