@@ -144,7 +144,7 @@ export default class Grid extends Component {
     console.log(this.state.wasAnimated);
     for (let i = 0; i < nodes.length; i++) {
       if (this.state.wasAnimated) pathAnimation(i);
-      else setTimeout(pathAnimation(i), 30 * i);
+      else setTimeout(pathAnimation(i), 100 * i);
     }
   };
   //////////////reset default
