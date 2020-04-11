@@ -109,14 +109,13 @@ export default class Grid extends Component {
   ////////////Obsługa grida
 
   animate(nodes, type, pathNodes) {
-    for (let i = 0; i < nodes.length; i++) {
-      // setTimeout(() => {
+    const visitedAnimation = (i) => {
       const grid = [...this.state.array.slice()];
       grid[nodes[i].y][nodes[i].x][type] = true;
 
       this.setState({
-        // grid,
-        wasAnimated: true,
+        grid,
+        // wasAnimated: true,
       });
 
       if (i === nodes.length - 1) {
@@ -126,8 +125,14 @@ export default class Grid extends Component {
               grid,
             });
       }
+    };
 
-      // }, 5 * i);
+    for (let i = 0; i < nodes.length; i++) {
+      if (this.state.wasAnimated) visitedAnimation(i);
+      else
+        setTimeout(() => {
+          visitedAnimation(i);
+        }, 30 * i);
     }
   }
 
@@ -138,14 +143,21 @@ export default class Grid extends Component {
 
       this.setState({
         grid,
-        wasAnimated: true,
       });
     };
+
     console.log(this.state.wasAnimated);
     for (let i = 0; i < nodes.length; i++) {
       if (this.state.wasAnimated) pathAnimation(i);
-      else setTimeout(pathAnimation(i), 100 * i);
+      else
+        setTimeout(() => {
+          pathAnimation(i);
+        }, 50 * i);
     }
+
+    this.setState({
+      wasAnimated: true,
+    });
   };
   //////////////reset default
   defaultGrid = () => {
