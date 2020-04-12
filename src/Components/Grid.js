@@ -132,6 +132,7 @@ export default class Grid extends Component {
           ? this.animatePath(pathNodes, "isPath")
           : this.setState({
               grid,
+              isProgress: false,
             });
       }
     };
