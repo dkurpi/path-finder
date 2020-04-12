@@ -162,13 +162,15 @@ export default class Grid extends Component {
       else
         setTimeout(() => {
           pathAnimation(i);
-          nodes.length - 1 === i ? this.audio3.play() : this.audio2.play();
-        }, 100 * i);
-      this.setState({
-        isProgress: false,
-      });
+          if (nodes.length - 1 === i) {
+            this.audio3.play();
+            this.setState({
+              isProgress: false,
+            });
+            console.log("elo");
+          } else this.audio2.play();
+        }, 1000 * i);
     }
-
     this.setState({
       wasAnimated: true,
     });
