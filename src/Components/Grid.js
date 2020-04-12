@@ -169,7 +169,7 @@ export default class Grid extends Component {
             });
             console.log("elo");
           } else this.audio2.play();
-        }, 1000 * i);
+        }, 100 * i);
     }
     this.setState({
       wasAnimated: true,
