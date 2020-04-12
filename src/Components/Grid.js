@@ -158,8 +158,12 @@ export default class Grid extends Component {
 
     console.log(this.state.wasAnimated);
     for (let i = 0; i < nodes.length; i++) {
-      if (this.state.wasAnimated) pathAnimation(i);
-      else
+      if (this.state.wasAnimated) {
+        pathAnimation(i);
+        this.setState({
+          isProgress: false,
+        });
+      } else
         setTimeout(() => {
           pathAnimation(i);
           if (nodes.length - 1 === i) {
@@ -300,15 +304,17 @@ export default class Grid extends Component {
       <>
         <Menu
           runScript={() => {
-            this.setState(
-              {
-                isStarted: true,
-                isProgress: true,
-              },
-              () => {
-                this.runScript();
-              }
-            );
+            if (!this.state.isProgress) {
+              this.setState(
+                {
+                  isStarted: true,
+                  isProgress: true,
+                },
+                () => {
+                  this.runScript();
+                }
+              );
+            }
           }}
           clear={() => {
             if (!this.state.isProgress) {
