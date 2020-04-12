@@ -133,6 +133,7 @@ export default class Grid extends Component {
           : this.setState({
               grid,
               isProgress: false,
+              wasAnimated: true,
             });
       }
     };
@@ -162,6 +163,7 @@ export default class Grid extends Component {
         pathAnimation(i);
         this.setState({
           isProgress: false,
+          wasAnimated: true,
         });
       } else
         setTimeout(() => {
