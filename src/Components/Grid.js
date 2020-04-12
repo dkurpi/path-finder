@@ -19,6 +19,7 @@ export default class Grid extends Component {
     isStarted: false,
     startPosition: { x: 5, y: 8 },
     endPosition: { x: 20, y: 12 },
+    isProgress: false,
   };
 
   runScript = () => {
@@ -162,6 +163,9 @@ export default class Grid extends Component {
           pathAnimation(i);
           nodes.length - 1 === i ? this.audio3.play() : this.audio2.play();
         }, 100 * i);
+      this.setState({
+        isProgress: false,
+      });
     }
 
     this.setState({
@@ -209,6 +213,7 @@ export default class Grid extends Component {
   };
 
   targetPosition = (y, x) => {
+    if (this.state.isProgress) return;
     const array = this.state.array.slice();
     if (
       !array[y][x].isTarget &&
@@ -295,6 +300,7 @@ export default class Grid extends Component {
             this.setState(
               {
                 isStarted: true,
+                isProgress: true,
               },
               () => {
                 this.runScript();
@@ -302,18 +308,22 @@ export default class Grid extends Component {
             );
           }}
           clear={() => {
-            this.setState({
-              isStarted: false,
-              wasAnimated: false,
-            });
-            this.startGrid();
+            if (!this.state.isProgress) {
+              this.setState({
+                isStarted: false,
+                wasAnimated: false,
+              });
+              this.startGrid();
+            }
           }}
           clearPath={() => {
-            this.setState({
-              isStarted: false,
-              wasAnimated: false,
-            });
-            this.clearPath();
+            if (!this.state.isProgress) {
+              this.setState({
+                isStarted: false,
+                wasAnimated: false,
+              });
+              this.clearPath();
+            }
           }}
         />
 
