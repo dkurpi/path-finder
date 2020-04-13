@@ -4,10 +4,12 @@ import Menu from "./Menu.js";
 import pop1 from "../Sounds/pop1.mp3";
 import pop2 from "../Sounds/pop2.mp3";
 import pop3 from "../Sounds/pop3.mp3";
+import pattern from "./pattern.js";
 
 export default class Grid extends Component {
   state = {
     array: [1, 2, 3, 5, 6, 7],
+    pattern: [],
     rows: 30,
     columns: 20,
     isLoaded: false,
@@ -232,6 +234,8 @@ export default class Grid extends Component {
       array[y][x].isWall = !array[y][x].isWall;
       this.runScript();
       this.audio1.play();
+
+      this.wallPattern(y, x);
     } else {
       const lastPressed = array[y][x].isTarget
         ? "endPosition"
@@ -287,6 +291,45 @@ export default class Grid extends Component {
     this.startGrid();
   }
 
+  gridPattern = (cordinates) => {
+    this.setState({ isProgress: true });
+
+    this.startGrid();
+
+    for (let i = 0; i < cordinates.length; i++) {
+      setTimeout(() => {
+        const { array } = this.state;
+        array[cordinates[i].y][cordinates[i].x].isWall = true;
+        this.setState({ array });
+        if (cordinates.length - 1 === i) {
+          this.setState({ isProgress: false });
+        }
+      }, 50 * i);
+    }
+  };
+
+  wallPattern = (y, x) => {
+    const { array, pattern } = this.state;
+    console.log(array[y][x]);
+    console.log(pattern.includes({ y: y, x: x }));
+    const isWall = pattern.some((obj) => obj.x === x && obj.y === y);
+    if (!isWall) {
+      console.log("include");
+      pattern.push({ y: y, x: x });
+    } else {
+      console.log("not include");
+      pattern.splice(
+        pattern.findIndex((id) => id.y === y && id.x === x),
+        1
+      );
+    }
+
+    this.setState({
+      pattern,
+    });
+    console.log(pattern);
+  };
+
   render() {
     const { isLoaded, array, isPressed } = this.state;
     if (!isLoaded) return <h5>Loading..</h5>;
@@ -304,6 +347,13 @@ export default class Grid extends Component {
 
     return (
       <>
+        <button
+          onClick={() => {
+            this.gridPattern(this.state.pattern);
+          }}
+        >
+          Render Grid
+        </button>
         <Menu
           runScript={() => {
             if (!this.state.isProgress) {
