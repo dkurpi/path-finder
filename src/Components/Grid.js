@@ -221,6 +221,9 @@ export default class Grid extends Component {
       array,
       isLoaded: true,
     });
+    this.refs = array.map((row, indexRow) =>
+      row.map((properties, indexColumn) => React.createRef())
+    );
   };
 
   targetPosition = (y, x) => {
@@ -309,15 +312,11 @@ export default class Grid extends Component {
   };
 
   wallPattern = (y, x) => {
-    const { array, pattern } = this.state;
-    console.log(array[y][x]);
-    console.log(pattern.includes({ y: y, x: x }));
+    const { pattern } = this.state;
     const isWall = pattern.some((obj) => obj.x === x && obj.y === y);
     if (!isWall) {
-      console.log("include");
       pattern.push({ y: y, x: x });
     } else {
-      console.log("not include");
       pattern.splice(
         pattern.findIndex((id) => id.y === y && id.x === x),
         1
@@ -330,26 +329,36 @@ export default class Grid extends Component {
     console.log(pattern);
   };
 
+  refs = [];
+
   render() {
     const { isLoaded, array, isPressed } = this.state;
     if (!isLoaded) return <h5>Loading..</h5>;
+
     const grid = array.map((row, indexRow) =>
       row.map((properties, indexColumn) => (
         <Position
           targetPosition={this.targetPosition}
           x={indexColumn}
           y={indexRow}
+          ref={(rf) => {
+            this.refs[indexRow][indexColumn] = rf;
+            return true;
+          }}
           properties={properties}
           isPressed={isPressed}
         />
       ))
     );
 
+
     return (
       <>
         <button
           onClick={() => {
-            this.gridPattern(this.state.pattern);
+            if (!this.state.isProgress) {
+              this.gridPattern(this.state.pattern);
+            }
           }}
         >
           Render Grid
