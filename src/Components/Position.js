@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import cx from "classnames";
 
 const Position = React.forwardRef((props, ref) => {
-  const { x, y, properties: obj, targetPosition, isPressed } = props;
+  const { x, y, properties: obj, targetPosition, isPressed, wasAnimated } = props;
 
   const clName = cx({
     pole: true,
@@ -10,11 +10,12 @@ const Position = React.forwardRef((props, ref) => {
     target: obj.isTarget,
     start: obj.isStart,
     visited:
-      obj.isAnimated &&
+      obj.isVisited &&
       !obj.isStart &&
       !obj.isTarget &&
       !obj.isWall &&
-      !obj.isPath,
+      !obj.isPath &&
+      wasAnimated,
     path: obj.isPath && !obj.isWall,
   });
 
@@ -27,7 +28,7 @@ const Position = React.forwardRef((props, ref) => {
       }}
       className={clName}
     >
-      {obj.isAnimated && !obj.isWall ? obj.distance : null}
+      {/* {obj.isVisited && !obj.isWall ? obj.distance : null} */}
     </div>
   );
 });

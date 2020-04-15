@@ -5,13 +5,15 @@ import pop1 from "../Sounds/pop1.mp3";
 import pop2 from "../Sounds/pop2.mp3";
 import pop3 from "../Sounds/pop3.mp3";
 import pattern from "./pattern.js";
+import MazeGenerator from "./MazeGenerator.js";
+import cx from "classnames";
 
 export default class Grid extends Component {
   state = {
     array: [1, 2, 3, 5, 6, 7],
     pattern: [],
-    rows: 30,
-    columns: 20,
+    rows: 31,
+    columns: 21,
     isLoaded: false,
     isClicked: false,
     isPressed: false,
@@ -19,8 +21,8 @@ export default class Grid extends Component {
     lastPressed: "startPosition",
     wasAnimated: false,
     isStarted: false,
-    startPosition: { x: 5, y: 8 },
-    endPosition: { x: 20, y: 12 },
+    startPosition: { x: 1, y: 1 },
+    endPosition: { x: 29, y: 19 },
     isProgress: false,
   };
 
@@ -31,7 +33,7 @@ export default class Grid extends Component {
       const visitedNodes = this.dijkstra(array, startPosition, endPosition);
       const finishNode = visitedNodes[visitedNodes.length - 1];
       const pathNodes = this.backToStartArray(finishNode);
-      this.animate(visitedNodes, "isAnimated", pathNodes);
+      this.animate(visitedNodes, pathNodes);
     }
   };
 
@@ -119,21 +121,35 @@ export default class Grid extends Component {
 
   ////////////Obsługa grida
 
-  animate(nodes, type, pathNodes) {
+  getClassName = (obj) => {
+    const clName = cx({
+      pole: true,
+      wall: obj.isWall,
+      target: obj.isTarget,
+      start: obj.isStart,
+      visited:
+        obj.isVisited &&
+        !obj.isStart &&
+        !obj.isTarget &&
+        !obj.isWall &&
+        !obj.isPath,
+      path: obj.isPath && !obj.isWall,
+    });
+    return clName;
+  };
+
+  animate(nodes, pathNodes) {
+    const grid = [...this.state.array.slice()];
     const visitedAnimation = (i) => {
-      const grid = [...this.state.array.slice()];
-      grid[nodes[i].y][nodes[i].x][type] = true;
-
-      this.setState({
-        grid,
-        // wasAnimated: true,
-      });
-
+      const obj = grid[nodes[i].y][nodes[i].x];
+      this.refs[nodes[i].y][nodes[i].x].className = this.getClassName(obj);
+      // this.setState({
+      //   grid,
+      // });
       if (i === nodes.length - 1) {
         pathNodes[0].isTarget
           ? this.animatePath(pathNodes, "isPath")
           : this.setState({
-              grid,
               isProgress: false,
               wasAnimated: true,
             });
@@ -145,39 +161,42 @@ export default class Grid extends Component {
       else
         setTimeout(() => {
           visitedAnimation(i);
-        }, 30 * i);
+        }, 5 * i);
     }
   }
 
-  animatePath = (nodes, type) => {
+  animatePath = (nodes) => {
     const pathAnimation = (i) => {
       const grid = [...this.state.array.slice()];
-      grid[nodes[i].y][nodes[i].x][type] = true;
-
-      this.setState({
-        grid,
-      });
+      const obj = grid[nodes[i].y][nodes[i].x];
+      obj.isPath = true;
+      console.log(obj);
+      this.refs[nodes[i].y][nodes[i].x].className = this.getClassName(obj);
     };
 
     console.log(this.state.wasAnimated);
     for (let i = 0; i < nodes.length; i++) {
       if (this.state.wasAnimated) {
         pathAnimation(i);
-        this.setState({
-          isProgress: false,
-          wasAnimated: true,
-        });
+        if (nodes.length - 1 === i) {
+          // this.audio3.play();
+          this.setState({
+            isProgress: false,
+            wasAnimated: true,
+          });
+        }
       } else
         setTimeout(() => {
           pathAnimation(i);
           if (nodes.length - 1 === i) {
-            this.audio3.play();
+            // this.audio3.play();
             this.setState({
               isProgress: false,
             });
             console.log("elo");
-          } else this.audio2.play();
-        }, 100 * i);
+          }
+          // else this.audio2.play();
+        }, 25 * i);
     }
     this.setState({
       wasAnimated: true,
@@ -236,7 +255,6 @@ export default class Grid extends Component {
     ) {
       array[y][x].isWall = !array[y][x].isWall;
       this.runScript();
-      this.audio1.play();
 
       this.wallPattern(y, x);
     } else {
@@ -264,6 +282,7 @@ export default class Grid extends Component {
     });
   };
 
+  pattern = [];
   ////zmiania wartosci grid
   modifyGrid = (properties, set) => {
     const { array, columns, rows, startPosition, endPosition } = this.state;
@@ -283,8 +302,12 @@ export default class Grid extends Component {
   };
 
   clearPath = () => {
+    for (let x = 0; x < this.state.columns; x++) {
+      for (let y = 0; y < this.state.rows; y++) {
+        this.refs[x][y].className = this.getClassName(this.state.array[x][y]);
+      }
+    }
     this.modifyGrid("isVisited", false);
-    this.modifyGrid("isAnimated", false);
     this.modifyGrid("isPath", false);
     this.modifyGrid("distance", Infinity);
     this.modifyGrid("prevNode", {});
@@ -294,20 +317,21 @@ export default class Grid extends Component {
     this.startGrid();
   }
 
-  gridPattern = (cordinates) => {
+  gridPattern = (cordinates, isWall = false) => {
     this.setState({ isProgress: true });
 
     this.startGrid();
+    isWall && this.modifyGrid("isWall", true);
 
     for (let i = 0; i < cordinates.length; i++) {
       setTimeout(() => {
         const { array } = this.state;
-        array[cordinates[i].y][cordinates[i].x].isWall = true;
+        array[cordinates[i].x][cordinates[i].y].isWall = !isWall;
         this.setState({ array });
         if (cordinates.length - 1 === i) {
           this.setState({ isProgress: false });
         }
-      }, 50 * i);
+      }, 30 * i);
     }
   };
 
@@ -326,13 +350,14 @@ export default class Grid extends Component {
     this.setState({
       pattern,
     });
+    this.pattern = pattern;
     console.log(pattern);
   };
 
   refs = [];
 
   render() {
-    const { isLoaded, array, isPressed } = this.state;
+    const { isLoaded, array, isPressed, wasAnimated } = this.state;
     if (!isLoaded) return <h5>Loading..</h5>;
 
     const grid = array.map((row, indexRow) =>
@@ -341,6 +366,7 @@ export default class Grid extends Component {
           targetPosition={this.targetPosition}
           x={indexColumn}
           y={indexRow}
+          wasAnimated={wasAnimated}
           ref={(rf) => {
             this.refs[indexRow][indexColumn] = rf;
             return true;
@@ -351,13 +377,14 @@ export default class Grid extends Component {
       ))
     );
 
-
     return (
       <>
         <button
           onClick={() => {
             if (!this.state.isProgress) {
-              this.gridPattern(this.state.pattern);
+              const coords = MazeGenerator(this.state.columns, this.state.rows);
+              this.clearPath();
+              this.gridPattern(coords, true);
             }
           }}
         >
@@ -383,6 +410,7 @@ export default class Grid extends Component {
                 isStarted: false,
                 wasAnimated: false,
               });
+              this.clearPath();
               this.startGrid();
             }
           }}
