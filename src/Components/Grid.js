@@ -12,8 +12,8 @@ export default class Grid extends Component {
   state = {
     array: [1, 2, 3, 5, 6, 7],
     pattern: [],
-    rows: 31,
-    columns: 21,
+    rows: 73,
+    columns: 31,
     isLoaded: false,
     isClicked: false,
     isPressed: false,
@@ -245,7 +245,7 @@ export default class Grid extends Component {
     );
   };
 
-  targetPosition = (y, x) => {
+  targetPosition = (y, x, type) => {
     if (this.state.isProgress) return;
     const array = this.state.array.slice();
     if (
@@ -319,20 +319,36 @@ export default class Grid extends Component {
 
   gridPattern = (cordinates, isWall = false) => {
     this.setState({ isProgress: true });
-
     this.startGrid();
+    const { array } = this.state;
     isWall && this.modifyGrid("isWall", true);
 
     for (let i = 0; i < cordinates.length; i++) {
       setTimeout(() => {
-        const { array } = this.state;
+        const obj = array[cordinates[i].x][cordinates[i].y];
         array[cordinates[i].x][cordinates[i].y].isWall = !isWall;
-        this.setState({ array });
+        this.refs[cordinates[i].x][
+          cordinates[i].y
+        ].className = this.getClassName(obj);
+
         if (cordinates.length - 1 === i) {
-          this.setState({ isProgress: false });
+          this.setState({ isProgress: false, 
+            array 
+          });
         }
-      }, 30 * i);
+      }, 20 * i);
     }
+
+    // for (let i = 0; i < cordinates.length; i++) {
+    // setTimeout(() => {
+    //     const { array } = this.state;
+    //     array[cordinates[i].x][cordinates[i].y].isWall = !isWall;
+    //     this.setState({ array });
+    //     if (cordinates.length - 1 === i) {
+    //       this.setState({ isProgress: false });
+    //     }
+    // }, 30 * i);
+    // }
   };
 
   wallPattern = (y, x) => {

@@ -2,7 +2,14 @@ import React, { useRef } from "react";
 import cx from "classnames";
 
 const Position = React.forwardRef((props, ref) => {
-  const { x, y, properties: obj, targetPosition, isPressed, wasAnimated } = props;
+  const {
+    x,
+    y,
+    properties: obj,
+    targetPosition,
+    isPressed,
+    wasAnimated,
+  } = props;
 
   const clName = cx({
     pole: true,
@@ -22,7 +29,7 @@ const Position = React.forwardRef((props, ref) => {
   return (
     <div
       ref={ref}
-      onMouseOver={() => (isPressed ? targetPosition(y, x) : null)}
+      onMouseOver={() => (isPressed ? targetPosition(y, x, "hover") : null)}
       onMouseDown={() => {
         targetPosition(y, x);
       }}
