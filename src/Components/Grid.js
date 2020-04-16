@@ -336,7 +336,7 @@ export default class Grid extends Component {
             array 
           });
         }
-      }, 20 * i);
+      }, 1000 + 20 * i);
     }
 
     // for (let i = 0; i < cordinates.length; i++) {

@@ -24,14 +24,22 @@
 
 @keyframes wall2 {
   0% {
-    transform: scale(1);
-    background-color: rgba(255, 0, 0, 0.377);
+    transform: scale(0.7);
+    background-color: rgb(255, 103, 103);
+    border-radius: 0;
+  }
+ 
+  50% {
+    transform: scale(.7);
+
+    background-color: rgba(255, 255, 255, 0.822);
+
   }
 
   100% {
     transform: scale(0);
-    background-color: rgba(0, 128, 0, 0.384);
-
+    background-color: rgba(255, 255, 255, 0.822);
+    border-radius: 50%;
   }
 }
 
@@ -43,14 +51,14 @@
 
 @keyframes wall {
   0% {
-    transform: scale(0);
+    transform: scale(0) rotate(-50deg);
   }
   50% {
-    transform: scale(1.1);
+    transform: scale(1.1) rotate(10deg);
   }
 
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
   }
 }
 .visited {
