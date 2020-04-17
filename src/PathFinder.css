@@ -18,7 +18,7 @@
   user-select: none;
   cursor: pointer;
   border: 1px solid rgba(86, 81, 94, 0.205);
-  animation: wall2 1s ease-in-out;
+  /* animation: wall2 1s ease-in-out; */
 }
 
 @keyframes wall2 {
@@ -44,19 +44,19 @@
 .wall {
   background-color: rgba(255, 255, 255, 0.822);
   transform: scale(1);
-  animation: wall 0.3s ease-in-out;
+  /* animation: wall 0.3s ease-in-out; */
 }
 
 @keyframes wall {
   0% {
-    transform: scale(0) rotate(-20deg);
+    transform: scale(0.7);
   }
   50% {
-    transform: scale(1.1) rotate(20deg);
+    transform: scale(1.1);
   }
 
   100% {
-    transform: scale(1) rotate(0deg);
+    transform: scale(1);
   }
 }
 .visited {
@@ -95,7 +95,7 @@
   background-color: rgb(255, 103, 103);
 
   border-radius: 5px;
-  transform: scale(0.6);
+  transform: scale(0.5);
 }
 
 .start.path {

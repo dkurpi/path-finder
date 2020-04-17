@@ -7,7 +7,6 @@ const Position = React.forwardRef((props, ref) => {
     y,
     properties: obj,
     targetPosition,
-    isPressed,
     wasAnimated,
   } = props;
 
@@ -29,9 +28,13 @@ const Position = React.forwardRef((props, ref) => {
   return (
     <div
       ref={ref}
-      onMouseOverCapture={() => (isPressed ? targetPosition(y, x, "hover") : null)}
+      onMouseOverCapture={() => (
+        // isPressed ? 
+        targetPosition(y, x)
+        //  : null
+         )}
       onMouseDown={() => {
-        targetPosition(y, x);
+        targetPosition(y, x,true);
       }}
       className={clName}
     >
