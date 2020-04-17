@@ -2,13 +2,7 @@ import React, { useRef } from "react";
 import cx from "classnames";
 
 const Position = React.forwardRef((props, ref) => {
-  const {
-    x,
-    y,
-    properties: obj,
-    targetPosition,
-    wasAnimated,
-  } = props;
+  const { x, y, properties: obj, targetPosition, wasAnimated } = props;
 
   const clName = cx({
     pole: true,
@@ -27,18 +21,13 @@ const Position = React.forwardRef((props, ref) => {
 
   return (
     <div
-      ref={ref}
-      onMouseOverCapture={() => (
-        // isPressed ? 
-        targetPosition(y, x)
-        //  : null
-         )}
+      className="poleContainer"
+      onMouseEnter={() => targetPosition(y, x)}
       onMouseDown={() => {
-        targetPosition(y, x,true);
+        targetPosition(y, x, true);
       }}
-      className={clName}
     >
-      {/* {obj.isVisited && !obj.isWall ? obj.distance : null} */}
+      <div ref={ref} className={clName}></div>
     </div>
   );
 });

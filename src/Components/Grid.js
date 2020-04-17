@@ -22,7 +22,7 @@ export default class Grid extends Component {
     wasAnimated: false,
     isStarted: false,
     startPosition: { x: 1, y: 1 },
-    endPosition: { x: 29, y: 19 },
+    endPosition: { x: 71, y: 29 },
     isProgress: false,
   };
 
@@ -287,8 +287,8 @@ export default class Grid extends Component {
   };
 
   ////zmiania wartosci grid
-  modifyGrid = (properties, set) => {
-    const { array, columns, rows, startPosition, endPosition } = this.state;
+  modifyGrid = (properties, set, array = this.state.array) => {
+    const { columns, rows, startPosition, endPosition } = this.state;
 
     for (let x = 0; x < columns; x++) {
       for (let y = 0; y < rows; y++) {
@@ -324,18 +324,18 @@ export default class Grid extends Component {
     this.setState({ isProgress: true });
     this.startGrid();
     const array = this.grid;
-    console.log(cordinates);
-    !isWallCordinates && this.modifyGrid("isWall", true);
+    !isWallCordinates && this.modifyGrid("isWall", true, array);
 
     for (let i = 0; i < cordinates.length; i++) {
       setTimeout(() => {
-        const obj = array[cordinates[i].x][cordinates[i].y];
         array[cordinates[i].x][cordinates[i].y].isWall = isWallCordinates;
+        const obj = array[cordinates[i].x][cordinates[i].y];
         this.refs[cordinates[i].x][
           cordinates[i].y
         ].className = this.getClassName(obj);
 
         if (cordinates.length - 1 === i) {
+          console.log(array);
           this.setState({ isProgress: false, array });
         }
       }, 1000 + 10 * i);
@@ -356,8 +356,44 @@ export default class Grid extends Component {
     }
   };
 
+  reverseMaze = (coords) => {
+    const { columns, rows } = this.state;
+
+    const array = Array(columns);
+    for (let x = 0; x < columns; x++) {
+      array[x] = Array(rows);
+      for (let y = 0; y < rows; y++) {
+        const pole = {
+          isWall: false,
+          y: y,
+          x: x,
+        };
+        array[x][y] = pole;
+      }
+    }
+    const flatArray = array.flat();
+    coords.forEach((element) => {
+      const index = flatArray.indexOf(array[element.x][element.y]);
+      console.log(index);
+
+      flatArray.splice(index, 1);
+    });
+
+    flatArray.sort((a, b) => {
+      const y = rows / 2 - 1;
+      const x = columns / 2 - 1;
+      const ay = a.y - y;
+      const ax = a.x - x;
+      const by = b.y - y;
+      const bx = b.x - x;
+      return Math.abs(ay * ay + ax * ax) - Math.abs(by * by + bx * bx);
+    });
+    return flatArray;
+  };
+
   refs = [];
   isPressed = false;
+
   render() {
     const { isLoaded, array, wasAnimated } = this.state;
     if (!isLoaded) return <h5>Loading..</h5>;
@@ -381,6 +417,42 @@ export default class Grid extends Component {
 
     return (
       <>
+        <Menu
+          runScript={() => {
+            if (!this.state.isProgress) {
+              this.setState(
+                {
+                  isStarted: true,
+                  isProgress: true,
+                  wasAnimated: false,
+                },
+                () => {
+                  this.clearPath();
+                  this.runScript();
+                }
+              );
+            }
+          }}
+          clear={() => {
+            if (!this.state.isProgress) {
+              this.setState({
+                isStarted: false,
+                wasAnimated: false,
+              });
+              this.clearPath();
+              this.startGrid();
+            }
+          }}
+          clearPath={() => {
+            if (!this.state.isProgress) {
+              this.setState({
+                isStarted: false,
+                wasAnimated: false,
+              });
+              this.clearPath();
+            }
+          }}
+        />
         <div style={{ display: "flex" }}>
           <button
             onClick={() => {
@@ -397,6 +469,20 @@ export default class Grid extends Component {
             Render Maze Korytarz
           </button>
 
+          <button
+            onClick={() => {
+              if (!this.state.isProgress) {
+                const coords = MazeGenerator(
+                  this.state.columns,
+                  this.state.rows
+                );
+                this.clearPath();
+                this.gridPattern(this.reverseMaze(coords), true);
+              }
+            }}
+          >
+            Render Maze Walls
+          </button>
           <button
             onClick={() => {
               if (!this.state.isProgress) {
@@ -434,43 +520,6 @@ export default class Grid extends Component {
             Render Pattern
           </button>
         </div>
-        <Menu
-          runScript={() => {
-            if (!this.state.isProgress) {
-              this.setState(
-                {
-                  isStarted: true,
-                  isProgress: true,
-                  wasAnimated: false,
-                },
-                () => {
-                  this.clearPath();
-                  this.runScript();
-                }
-              );
-            }
-          }}
-          clear={() => {
-            if (!this.state.isProgress) {
-              this.setState({
-                isStarted: false,
-                wasAnimated: false,
-              });
-              this.clearPath();
-              this.startGrid();
-            }
-          }}
-          clearPath={() => {
-            if (!this.state.isProgress) {
-              this.setState({
-                isStarted: false,
-                wasAnimated: false,
-              });
-              this.clearPath();
-            }
-          }}
-        />
-
         <div
           onMouseDown={() => {
             this.isPressed = true;
