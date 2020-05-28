@@ -6,7 +6,7 @@ import { dijkstra, backToStartArray } from "./algoritms";
 import getClassName from "./getClassName";
 import defaultGrid from "./defaultGrid";
 import pattern from "./pattern.js";
-import mazeGenerator from "./mazeGenerator.js";
+// import mazeGenerator from "./mazeGenerator.js";
 import sortGrid from "./sortGrid.js";
 
 export default class Grid extends Component {
@@ -283,7 +283,7 @@ export default class Grid extends Component {
           }}
         />
         <div style={{ display: "flex" }}>
-          <button
+          {/* <button
             onClick={() => {
               if (!this.state.isProgress) {
                 const coords = mazeGenerator(
@@ -296,9 +296,9 @@ export default class Grid extends Component {
             }}
           >
             Render Maze Korytarz
-          </button>
+          </button> */}
 
-          <button
+          {/* <button
             onClick={() => {
               if (!this.state.isProgress) {
                 const coords = mazeGenerator(
@@ -311,8 +311,8 @@ export default class Grid extends Component {
             }}
           >
             Render Maze Walls
-          </button>
-          <button
+          </button> */}
+          {/* <button
             onClick={() => {
               if (!this.state.isProgress) {
                 const coords = mazeGenerator(
@@ -325,7 +325,7 @@ export default class Grid extends Component {
             }}
           >
             Render Maze Walls
-          </button>
+          </button> */}
 
           <button
             onClick={() => {
