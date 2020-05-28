@@ -1,4 +1,4 @@
-const MazeGenerator = (rows, colums) => {
+const mazeGenerator = (rows, colums) => {
   const initialMaze = defaultMaze(rows, colums, createCell);
   const maze = [];
   const front = [];
@@ -143,4 +143,4 @@ const invertMaze = (maze, rows, columns) => {
 
   return maze;
 };
-export default MazeGenerator;
+export default mazeGenerator;
