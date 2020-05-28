@@ -9,7 +9,6 @@
   justify-content: flex-start;
   align-content: flex-start;
   background-color: #fff;
-  /* border: 1px solid rgba(255, 255, 255, 0.103); */
   background-color: #3c4352;
 }
 .poleContainer {
@@ -20,46 +19,74 @@
   line-height: 40px;
   user-select: none;
   cursor: pointer;
-  /* animation: wall2 1s ease-in-out; */
 }
 .pole {
   width: 100%;
   height: 100%;
 }
 
-@keyframes wall2 {
-  0% {
-    transform: scale(0.7);
-    background-color: rgba(255, 255, 255, 0.822);
+.wall > .poleContainer {
+  border: none;
+}
 
-    border-radius: 0;
-  }
+.target {
+  background-color: red !important;;
+  transition: 0.2s;
+  color: white;
+  position: relative;
+  z-index: 999;
+}
 
-  50% {
-    transform: scale(0.7);
-    background-color: rgb(255, 103, 103);
-  }
+.start {
+  background-color: rgb(50, 255, 50) !important;
+  position: relative;
+  z-index: 999;
+}
 
-  100% {
-    transform: scale(0);
-    background-color: rgba(255, 255, 255, 0.822);
-    border-radius: 50%;
-  }
+
+/* /////////////////////////////////////////////////////////////////////////////////// */
+.visited {
+  background-color: rgba(2, 255, 36, 0.205);
+  animation: visited .9s ease-in-out;
+}
+
+.path {
+  background-color: rgb(217, 255, 0);
+  animation: pathAnimation 1.3s ease-in-out;
 }
 
 .wall {
   background-color: rgba(255, 255, 255, 0.822);
   transform: scale(1);
-  animation: wall 1.3s ease-in-out;
+  animation: wall .7s ease-in-out;
+  position: relative;
+  z-index: 90;
+}
+.start.path {
+  background-color: rgb(50, 255, 50);
+  transform: scale(1);
+  border-radius: 20px;
+  transition: 0.5s;
+  position: relative;
+  z-index: 99;
+  transform: scale(1.4);
 }
 
-.wall > .poleContainer {
-  border: none;
+.target.path {
+  background-color: red;
+  transform: scale(1);
+  border-radius: 20px;
+  transition: 0.5s;
+  position: relative;
+  z-index: 99;
+  transform: scale(1.4);
 }
-
 @keyframes wall {
   0% {
     transform: scale(0.3);
+  }
+  20% {
+    transform: scale(0.8);
     background-color: rgb(253, 173, 0);
   }
   50% {
@@ -76,54 +103,47 @@
     transform: scale(1);
   }
 }
-.visited {
-  /* border: 1px solid rgba(170, 255, 196, 0.61); */
-  /* bbgc  : 1px solid rgba(255, 2, 200, 0.849); */
-  background-color: rgba(255, 2, 200, 0.849);
-  animation: visited 3s ease-in-out;
-}
 
 @keyframes visited {
   0% {
-    transform: scale(0.4);
-    background-color: rgb(217, 255, 0);
+    transform: scale(0);
   }
   20% {
+    transform: scale(0.5);
+    background-color: rgb(253, 173, 0);
+  }
+  50% {
+    background-color: rgba(217, 255, 0, 0.932);
+    transform: scale(1);
+
+  }
+  70% {
+    background-color: rgba(2, 255, 36, 0.555);
+  }
+  100% {
+    background-color: rgba(2, 255, 36, 0.205);
+    transform: scale(1);
+  }
+}
+
+@keyframes pathAnimation {
+  0% {
+    transform: scale(0);
+    background-color: rgba(253, 173, 0, 0);
+  }
+  50% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(0.8);
     background-color: rgb(217, 255, 0);
   }
-  21% {
-    background-color: rgb(47, 255, 109);
+  70% {
+    transform: scale(1.4);
+    background-color: rgb(217, 255, 0);
   }
 
   100% {
     transform: scale(1);
   }
-}
-.target {
-  background-color: red;
-  transition: 0.2s;
-  color: white;
-}
-
-.start {
-  background-color: rgb(50, 255, 50);
-}
-
-.path {
-  background-color: rgb(217, 255, 0);
-
-}
-
-.start.path {
-  background-color: rgb(50, 255, 50);
-  transform: scale(1);
-  border-radius: 20px;
-  transition: 0.5s;
-}
-
-.target.path {
-  background-color: red;
-  transform: scale(1);
-  border-radius: 20px;
-  transition: 0.5s;
 }

@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import Position from "./Position.js";
 import Menu from "./Menu.js";
-import pop1 from "../Sounds/pop1.mp3";
-import pop2 from "../Sounds/pop2.mp3";
-import pop3 from "../Sounds/pop3.mp3";
+
+import { dijkstra, backToStartArray } from "./algoritms";
+import getClassName from "./getClassName";
+import defaultGrid from "./defaultGrid";
 import pattern from "./pattern.js";
-import MazeGenerator from "./MazeGenerator.js";
-import cx from "classnames";
+import mazeGenerator from "./mazeGenerator.js";
+import sortGrid from "./sortGrid.js";
 
 export default class Grid extends Component {
   state = {
@@ -25,133 +26,52 @@ export default class Grid extends Component {
     endPosition: { x: 71, y: 29 },
     isProgress: false,
   };
-
   grid = [];
+  refs = [];
+  isPressed = false;
+  pattern = [];
+
+  componentDidMount() {
+    this.startGrid();
+  }
+
+  startGrid = () => {
+    const { columns, rows, startPosition, endPosition } = this.state;
+    this.grid = defaultGrid(columns, rows, startPosition, endPosition);
+
+    this.setState({
+      array: this.grid,
+      isLoaded: true,
+    });
+
+    this.refs = this.grid.map((row, indexRow) =>
+      row.map((properties, indexColumn) => React.createRef())
+    );
+  };
 
   runScript = () => {
     const { array, startPosition, endPosition, isStarted } = this.state;
     this.clearPath();
     if (isStarted) {
-      console.log("runScript");
-      const visitedNodes = this.dijkstra(array, startPosition, endPosition);
+      const visitedNodes = dijkstra(array, startPosition, endPosition);
       const finishNode = visitedNodes[visitedNodes.length - 1];
-      const pathNodes = this.backToStartArray(finishNode);
-      this.animate(visitedNodes, pathNodes);
+      const pathNodes = backToStartArray(finishNode);
+      this.visitingAnimation(visitedNodes, pathNodes);
     }
   };
 
-  audio1 = new Audio(pop1);
-  audio2 = new Audio(pop2);
-  audio3 = new Audio(pop3);
-
-  /////////////algo
-  backToStartArray = (finishNode) => {
-    const path = [];
-    let node = finishNode;
-    while (node.prevNode !== undefined) {
-      path.push(node);
-      node = node.prevNode;
-    }
-    return path;
-  };
-
-  dijkstra(array1, start, end) {
-    const arrayBufor = array1.slice();
-    const flatArray = arrayBufor.flat();
-    arrayBufor[start.y][start.x].distance = 0;
-
-    const VisitedArray = [];
-    const unVisitedArray = flatArray;
-
-    this.sortArrayByDistance(unVisitedArray);
-    let currentPos = unVisitedArray.shift();
-    let neighbours = this.neighbours(currentPos, arrayBufor);
-    arrayBufor[currentPos.y][currentPos.x].isVisited = true;
-
-    while (unVisitedArray.length) {
-      this.sortArrayByDistance(unVisitedArray);
-      currentPos = unVisitedArray.shift();
-      if (currentPos.distance === Infinity) {
-        return VisitedArray;
-      }
-      VisitedArray.push(currentPos);
-      arrayBufor[currentPos.y][currentPos.x].isVisited = true;
-      if (
-        arrayBufor[currentPos.y][currentPos.x].isWall === true &&
-        !arrayBufor[currentPos.y][currentPos.x].isTarget
-      )
-        continue;
-
-      if (currentPos.isTarget) {
-        this.setState({ array: arrayBufor });
-        return VisitedArray;
-      }
-      neighbours = this.neighbours(currentPos, arrayBufor);
-    }
-  }
-
-  sortArrayByDistance = (array) => {
-    array.sort((a, b) => a.distance - b.distance);
-  };
-
-  neighbours = (obj, array) => {
-    const neighbours = [];
-
-    if (obj.y < array.length - 1) {
-      neighbours.push(array[obj.y + 1][obj.x]);
-    }
-    if (obj.x > 0) {
-      neighbours.push(array[obj.y][obj.x - 1]);
-    }
-    if (obj.y > 0) {
-      neighbours.push(array[obj.y - 1][obj.x]);
-    }
-    if (obj.x < array[obj.y].length - 1) {
-      neighbours.push(array[obj.y][obj.x + 1]);
-    }
-
-    const neighboursFiltered = neighbours.filter(
-      (neighbour) => !neighbour.isVisited
-    );
-
-    for (const item of neighboursFiltered) {
-      array[item.y][item.x].distance = obj.distance + 1;
-      array[item.y][item.x].prevNode = obj;
-    }
-
-    return neighboursFiltered;
-  };
-
-  ////////////Obsługa grida
-
-  getClassName = (obj) => {
-    const clName = cx({
-      pole: true,
-      wall: obj.isWall,
-      target: obj.isTarget,
-      start: obj.isStart,
-      visited:
-        obj.isVisited &&
-        !obj.isStart &&
-        !obj.isTarget &&
-        !obj.isWall &&
-        !obj.isPath,
-      path: obj.isPath && !obj.isWall,
-    });
-    return clName;
-  };
-
-  animate(nodes, pathNodes) {
+  visitingAnimation(nodes, pathNodes) {
     const grid = [...this.state.array.slice()];
+
     const visitedAnimation = (i) => {
-      const obj = grid[nodes[i].y][nodes[i].x];
-      this.refs[nodes[i].y][nodes[i].x].className = this.getClassName(obj);
-      // this.setState({
-      //   grid,
-      // });
-      if (i === nodes.length - 1) {
+      const { y, x } = nodes[i];
+      const node = grid[y][x];
+      this.refs[y][x].className = getClassName(node);
+
+      const isLastNode = i === nodes.length - 1;
+      if (isLastNode) {
         pathNodes[0].isTarget
-          ? this.animatePath(pathNodes, "isPath")
+          ? this.visitingPathAnimation(pathNodes)
           : this.setState({
               isProgress: false,
               wasAnimated: true,
@@ -164,113 +84,62 @@ export default class Grid extends Component {
       else
         setTimeout(() => {
           visitedAnimation(i);
-        }, 5 * i);
+        }, 1000 + 2 * i);
     }
   }
 
-  animatePath = (nodes) => {
+  visitingPathAnimation = (pathNodes) => {
+    const grid = [...this.state.array.slice()];
     const pathAnimation = (i) => {
-      const grid = [...this.state.array.slice()];
-      const obj = grid[nodes[i].y][nodes[i].x];
-      obj.isPath = true;
-      this.refs[nodes[i].y][nodes[i].x].className = this.getClassName(obj);
+      const { y, x } = pathNodes[i];
+      const pathNode = grid[y][x];
+
+      pathNode.isPath = true;
+      this.refs[y][x].className = getClassName(pathNode);
+
+      const isLastPathNode = pathNodes.length - 1 === i;
+      if (isLastPathNode) {
+        this.setState({
+          isProgress: false,
+          wasAnimated: true,
+        });
+      }
     };
 
-    for (let i = 0; i < nodes.length; i++) {
+    for (let i = 0; i < pathNodes.length; i++) {
       if (this.state.wasAnimated) {
         pathAnimation(i);
-        if (nodes.length - 1 === i) {
-          // this.audio3.play();
-          this.setState({
-            isProgress: false,
-            wasAnimated: true,
-          });
-        }
       } else
         setTimeout(() => {
           pathAnimation(i);
-          if (nodes.length - 1 === i) {
-            // this.audio3.play();
-            this.setState({
-              isProgress: false,
-            });
-            console.log("elo");
-          }
-          // else this.audio2.play();
-        }, 25 * i);
+        }, 15 * i);
     }
     this.setState({
       wasAnimated: true,
     });
   };
   //////////////reset default
-  defaultGrid = () => {
-    const { columns, rows } = this.state;
-
-    const array = Array(columns);
-    for (let x = 0; x < columns; x++) {
-      array[x] = Array(rows);
-      for (let y = 0; y < rows; y++) {
-        const pole = {
-          isWall: false,
-          y: x,
-          x: y,
-          isTarget: false,
-          isAnimated: false,
-          isStart: false,
-          isVisited: false,
-          isPath: false,
-          distance: Infinity,
-          prevNode: {},
-        };
-        array[x][y] = pole;
-      }
-    }
-
-    return array;
-  };
-
-  startGrid = () => {
-    const array = this.defaultGrid();
-    const { startPosition, endPosition } = this.state;
-    array[endPosition.y][endPosition.x].isTarget = true;
-    array[startPosition.y][startPosition.x].isStart = true;
-    array[startPosition.y][startPosition.x].distance = 0;
-    this.grid = array;
-    console.log(this.grid);
-    this.setState({
-      array,
-      isLoaded: true,
-    });
-    this.refs = array.map((row, indexRow) =>
-      row.map((properties, indexColumn) => React.createRef())
-    );
-  };
 
   targetPosition = (y, x, click = false) => {
-    console.log(click);
     if (this.state.isProgress) return;
     if (!this.isPressed && !click) return;
-    const array = this.grid;
-    if (
-      !array[y][x].isTarget &&
-      !array[y][x].isStart &&
-      !this.state.isPointPressed
-    ) {
-      console.log(y, x, this.isPressed, array[y][x].isWall);
 
-      const obj = array[y][x];
-      array[y][x].isWall = !array[y][x].isWall;
-      this.refs[y][x].className = this.getClassName(obj);
+    const { grid, refs } = this;
+    const node = grid[y][x];
+
+    if (!node.isTarget && !node.isStart && !this.state.isPointPressed) {
+      node.isWall = !node.isWall;
+      refs[y][x].className = getClassName(node);
+
       this.state.isStarted && this.runScript();
-
       this.wallPattern(x, y);
     } else {
-      const lastPressed = array[y][x].isTarget
+      const lastPressed = node.isTarget
         ? "endPosition"
-        : array[y][x].isStart
+        : node.isStart
         ? "startPosition"
         : this.state.lastPressed;
+
       this.setState(
         {
           [lastPressed]: { x: x, y: y },
@@ -307,7 +176,7 @@ export default class Grid extends Component {
   clearPath = () => {
     for (let x = 0; x < this.state.columns; x++) {
       for (let y = 0; y < this.state.rows; y++) {
-        this.refs[x][y].className = this.getClassName(this.state.array[x][y]);
+        this.refs[x][y].className = getClassName(this.state.array[x][y]);
       }
     }
     this.modifyGrid("isVisited", false);
@@ -316,10 +185,6 @@ export default class Grid extends Component {
     this.modifyGrid("prevNode", {});
   };
 
-  componentDidMount() {
-    this.startGrid();
-  }
-
   gridPattern = (cordinates, isWallCordinates = true) => {
     this.setState({ isProgress: true });
     this.startGrid();
@@ -327,22 +192,23 @@ export default class Grid extends Component {
     !isWallCordinates && this.modifyGrid("isWall", true, array);
 
     for (let i = 0; i < cordinates.length; i++) {
+      
+
       setTimeout(() => {
         array[cordinates[i].x][cordinates[i].y].isWall = isWallCordinates;
         const obj = array[cordinates[i].x][cordinates[i].y];
-        this.refs[cordinates[i].x][
-          cordinates[i].y
-        ].className = this.getClassName(obj);
+        this.refs[cordinates[i].x][cordinates[i].y].className = getClassName(
+          obj
+        );
 
         if (cordinates.length - 1 === i) {
           console.log(array);
           this.setState({ isProgress: false, array });
         }
-      }, 1000 + 10 * i);
+      }, 1000 + 5 * i);
     }
   };
 
-  pattern = [];
   wallPattern = (y, x) => {
     const isWall = this.pattern.some((obj) => obj.x === x && obj.y === y);
     console.log(this.pattern, isWall);
@@ -356,48 +222,11 @@ export default class Grid extends Component {
     }
   };
 
-  reverseMaze = (coords) => {
-    const { columns, rows } = this.state;
-
-    const array = Array(columns);
-    for (let x = 0; x < columns; x++) {
-      array[x] = Array(rows);
-      for (let y = 0; y < rows; y++) {
-        const pole = {
-          isWall: false,
-          y: y,
-          x: x,
-        };
-        array[x][y] = pole;
-      }
-    }
-    const flatArray = array.flat();
-    coords.forEach((element) => {
-      const index = flatArray.indexOf(array[element.x][element.y]);
-      console.log(index);
-
-      flatArray.splice(index, 1);
-    });
-
-    flatArray.sort((a, b) => {
-      const y = rows / 2 - 1;
-      const x = columns / 2 - 1;
-      const ay = a.y - y;
-      const ax = a.x - x;
-      const by = b.y - y;
-      const bx = b.x - x;
-      return Math.abs(ay * ay + ax * ax) - Math.abs(by * by + bx * bx);
-    });
-    return flatArray;
-  };
-
-  refs = [];
-  isPressed = false;
-
+  // RENDER JUTRO
   render() {
-    const { isLoaded, array, wasAnimated } = this.state;
+    const { isLoaded, array, wasAnimated, columns, rows } = this.state;
     if (!isLoaded) return <h5>Loading..</h5>;
-    console.log("render");
+
     const grid = array.map((row, indexRow) =>
       row.map((properties, indexColumn) => (
         <Position
@@ -405,8 +234,8 @@ export default class Grid extends Component {
           x={indexColumn}
           y={indexRow}
           wasAnimated={wasAnimated}
-          ref={(rf) => {
-            this.refs[indexRow][indexColumn] = rf;
+          ref={(ref) => {
+            this.refs[indexRow][indexColumn] = ref;
             return true;
           }}
           properties={properties}
@@ -457,7 +286,7 @@ export default class Grid extends Component {
           <button
             onClick={() => {
               if (!this.state.isProgress) {
-                const coords = MazeGenerator(
+                const coords = mazeGenerator(
                   this.state.columns,
                   this.state.rows
                 );
@@ -472,12 +301,12 @@ export default class Grid extends Component {
           <button
             onClick={() => {
               if (!this.state.isProgress) {
-                const coords = MazeGenerator(
+                const coords = mazeGenerator(
                   this.state.columns,
                   this.state.rows
                 );
                 this.clearPath();
-                this.gridPattern(this.reverseMaze(coords), true);
+                this.gridPattern(sortGrid(coords, columns, rows), true);
               }
             }}
           >
@@ -486,7 +315,7 @@ export default class Grid extends Component {
           <button
             onClick={() => {
               if (!this.state.isProgress) {
-                const coords = MazeGenerator(
+                const coords = mazeGenerator(
                   this.state.columns,
                   this.state.rows
                 );
