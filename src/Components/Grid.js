@@ -6,7 +6,7 @@ import { dijkstra, backToStartArray } from "./algoritms";
 import getClassName from "./getClassName";
 import defaultGrid from "./defaultGrid";
 import pattern from "./pattern.js";
-// import mazeGenerator from "./mazeGenerator.js";
+import generatorMaze from "./generatorMaze.js";
 import sortGrid from "./sortGrid.js";
 
 export default class Grid extends Component {
@@ -192,8 +192,6 @@ export default class Grid extends Component {
     !isWallCordinates && this.modifyGrid("isWall", true, array);
 
     for (let i = 0; i < cordinates.length; i++) {
-      
-
       setTimeout(() => {
         array[cordinates[i].x][cordinates[i].y].isWall = isWallCordinates;
         const obj = array[cordinates[i].x][cordinates[i].y];
@@ -283,10 +281,10 @@ export default class Grid extends Component {
           }}
         />
         <div style={{ display: "flex" }}>
-          {/* <button
+          <button
             onClick={() => {
               if (!this.state.isProgress) {
-                const coords = mazeGenerator(
+                const coords = generatorMaze(
                   this.state.columns,
                   this.state.rows
                 );
@@ -296,12 +294,12 @@ export default class Grid extends Component {
             }}
           >
             Render Maze Korytarz
-          </button> */}
+          </button>
 
-          {/* <button
+          <button
             onClick={() => {
               if (!this.state.isProgress) {
-                const coords = mazeGenerator(
+                const coords = generatorMaze(
                   this.state.columns,
                   this.state.rows
                 );
@@ -311,11 +309,11 @@ export default class Grid extends Component {
             }}
           >
             Render Maze Walls
-          </button> */}
-          {/* <button
+          </button>
+          <button
             onClick={() => {
               if (!this.state.isProgress) {
-                const coords = mazeGenerator(
+                const coords = generatorMaze(
                   this.state.columns,
                   this.state.rows
                 );
@@ -325,7 +323,7 @@ export default class Grid extends Component {
             }}
           >
             Render Maze Walls
-          </button> */}
+          </button>
 
           <button
             onClick={() => {
