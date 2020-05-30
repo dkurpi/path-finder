@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Position from "./Position.js";
 import Menu from "./Menu.js";
+import Button from "./Button.js";
 
 import { dijkstra, backToStartArray } from "./algoritms";
 import getClassName from "./getClassName";
@@ -22,7 +23,7 @@ export default class Grid extends Component {
     lastPressed: "startPosition",
     wasAnimated: false,
     isStarted: false,
-    startPosition: { x: 1, y: 1 },
+    startPosition: { x: 21, y: 14 },
     endPosition: { x: 71, y: 29 },
     isProgress: false,
   };
@@ -51,7 +52,7 @@ export default class Grid extends Component {
 
   runScript = () => {
     const { array, startPosition, endPosition, isStarted } = this.state;
-    this.clearPath();
+    this.clearVisited();
     if (isStarted) {
       const visitedNodes = dijkstra(array, startPosition, endPosition);
       const finishNode = visitedNodes[visitedNodes.length - 1];
@@ -158,22 +159,19 @@ export default class Grid extends Component {
   ////zmiania wartosci grid
   modifyGrid = (properties, set, array = this.state.array) => {
     const { columns, rows, startPosition, endPosition } = this.state;
-
     for (let x = 0; x < columns; x++) {
       for (let y = 0; y < rows; y++) {
         array[x][y][properties] = set;
       }
     }
-
     array[startPosition.y][startPosition.x].isStart = true;
     array[endPosition.y][endPosition.x].isTarget = true;
-
     this.setState({
       array,
     });
   };
 
-  clearPath = () => {
+  clearVisited = () => {
     for (let x = 0; x < this.state.columns; x++) {
       for (let y = 0; y < this.state.rows; y++) {
         this.refs[x][y].className = getClassName(this.state.array[x][y]);
@@ -192,15 +190,15 @@ export default class Grid extends Component {
     !isWallCordinates && this.modifyGrid("isWall", true, array);
 
     for (let i = 0; i < cordinates.length; i++) {
+      const { x, y } = cordinates[i];
       setTimeout(() => {
-        array[cordinates[i].x][cordinates[i].y].isWall = isWallCordinates;
-        const obj = array[cordinates[i].x][cordinates[i].y];
-        this.refs[cordinates[i].x][cordinates[i].y].className = getClassName(
-          obj
-        );
-
+        array[x][y].isWall = isWallCordinates;
+        const obj = array[x][y];
+        this.refs[x][y].className = getClassName(obj);
+        console.log("0");
         if (cordinates.length - 1 === i) {
-          console.log(array);
+          console.log("1");
+
           this.setState({ isProgress: false, array });
         }
       }, 1000 + 5 * i);
@@ -209,7 +207,6 @@ export default class Grid extends Component {
 
   wallPattern = (y, x) => {
     const isWall = this.pattern.some((obj) => obj.x === x && obj.y === y);
-    console.log(this.pattern, isWall);
     if (!isWall) {
       this.pattern.push({ y: y, x: x });
     } else {
@@ -220,9 +217,41 @@ export default class Grid extends Component {
     }
   };
 
-  // RENDER JUTRO
+  /////////
+
+  handleRunButton = () => {
+    if (this.state.isProgress) return;
+    this.setState(
+      {
+        isStarted: true,
+        isProgress: true,
+        wasAnimated: false,
+      },
+      () => {
+        this.clearVisited();
+        this.runScript();
+      }
+    );
+  };
+
+  handleResetAnimation = (isProgres, callback = () => {}) => {
+    if (isProgres) return;
+    this.setState({
+      isStarted: false,
+      wasAnimated: false,
+    });
+    this.clearVisited();
+    callback();
+  };
   render() {
-    const { isLoaded, array, wasAnimated, columns, rows } = this.state;
+    const {
+      isLoaded,
+      array,
+      wasAnimated,
+      columns,
+      rows,
+      isProgress,
+    } = this.state;
     if (!isLoaded) return <h5>Loading..</h5>;
 
     const grid = array.map((row, indexRow) =>
@@ -234,118 +263,83 @@ export default class Grid extends Component {
           wasAnimated={wasAnimated}
           ref={(ref) => {
             this.refs[indexRow][indexColumn] = ref;
-            return true;
           }}
           properties={properties}
           isPressed={this.isPressed}
         />
       ))
     );
-
     return (
       <>
         <Menu
-          runScript={() => {
-            if (!this.state.isProgress) {
-              this.setState(
-                {
-                  isStarted: true,
-                  isProgress: true,
-                  wasAnimated: false,
-                },
-                () => {
-                  this.clearPath();
-                  this.runScript();
-                }
-              );
-            }
-          }}
+          handleRunButton={this.handleRunButton}
           clear={() => {
-            if (!this.state.isProgress) {
-              this.setState({
-                isStarted: false,
-                wasAnimated: false,
-              });
-              this.clearPath();
-              this.startGrid();
-            }
+            this.handleResetAnimation(isProgress, this.startGrid);
           }}
-          clearPath={() => {
-            if (!this.state.isProgress) {
-              this.setState({
-                isStarted: false,
-                wasAnimated: false,
-              });
-              this.clearPath();
-            }
+          clearAll={() => {
+            this.handleResetAnimation(isProgress);
           }}
         />
-        <div style={{ display: "flex" }}>
-          <button
-            onClick={() => {
-              if (!this.state.isProgress) {
-                const coords = generatorMaze(
-                  this.state.columns,
-                  this.state.rows
-                );
-                this.clearPath();
-                this.gridPattern(coords, false);
-              }
-            }}
-          >
-            Render Maze Korytarz
-          </button>
 
-          <button
-            onClick={() => {
-              if (!this.state.isProgress) {
-                const coords = generatorMaze(
-                  this.state.columns,
-                  this.state.rows
-                );
-                this.clearPath();
-                this.gridPattern(sortGrid(coords, columns, rows), true);
-              }
+        <div>
+          <Button
+            className="button is-light"
+            text={"Render Random Maze"}
+            disable={isProgress}
+            clickFcn={() => {
+              this.clearVisited();
+              const mazeWalls = generatorMaze(columns, rows);
+              this.gridPattern(sortGrid(mazeWalls, columns, rows), true);
             }}
-          >
-            Render Maze Walls
-          </button>
-          <button
-            onClick={() => {
-              if (!this.state.isProgress) {
-                const coords = generatorMaze(
-                  this.state.columns,
-                  this.state.rows
-                );
-                this.clearPath();
-                this.gridPattern(coords, true);
-              }
-            }}
-          >
-            Render Maze Walls
-          </button>
+          />
 
-          <button
-            onClick={() => {
-              if (!this.state.isProgress && this.pattern !== []) {
-                this.clearPath();
-                console.log(this.pattern);
-                this.gridPattern(this.pattern);
-              }
+          <Button
+            className="button is-light"
+            text={"Render Random Walls"}
+            disable={isProgress}
+            clickFcn={() => {
+              this.clearVisited();
+              const mazeWalls = generatorMaze(columns, rows);
+              this.gridPattern(mazeWalls, true);
             }}
-          >
-            Render Your Pattern
-          </button>
-          <button
-            onClick={() => {
-              if (!this.state.isProgress) {
-                this.clearPath();
-                this.gridPattern(pattern);
-              }
+          />
+
+          <Button
+            className="button is-light"
+            text={` Render Your Pattern (${this.pattern.length})`}
+            disable={isProgress || this.pattern.length === 0}
+            clickFcn={() => {
+              this.clearVisited();
+              this.gridPattern(this.pattern);
             }}
-          >
-            Render Pattern
-          </button>
+          />
+          <Button
+            className="button is-danger"
+            text={`delete your pattern`}
+            disable={isProgress || this.pattern.length === 0}
+            clickFcn={() => {
+              this.pattern = [];
+            }}
+          />
+          {/* <Button
+            className="button is-danger small"
+            text={`save as your pattern`}
+            disable={isProgress}
+            clickFcn={() => {
+              this.pattern = array.flat();
+              console.log(this.pattern);
+            }}
+          /> */}
+
+          <Button
+            className="button is-light"
+            text={" Render Patterns"}
+            disable={isProgress}
+            clickFcn={() => {
+              this.clearVisited();
+              this.gridPattern(pattern);
+            }}
+          />
         </div>
         <div
           onMouseDown={() => {
@@ -353,12 +347,10 @@ export default class Grid extends Component {
           }}
           onMouseUp={() => {
             this.isPressed = false;
-
             this.setState({ isPointPressed: false });
           }}
           onMouseLeave={() => {
             this.isPressed = false;
-
             this.setState({ isPointPressed: false });
           }}
           className="gridContainer"
