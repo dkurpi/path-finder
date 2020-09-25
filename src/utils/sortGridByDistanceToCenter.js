@@ -1,4 +1,4 @@
-export default function sortGrid(coords, columns, rows) {
+export default function sortGridByDistanceToCenter(coords, columns, rows) {
 
   const array = Array(columns);
   for (let x = 0; x < columns; x++) {

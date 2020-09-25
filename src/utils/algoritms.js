@@ -1,19 +1,9 @@
-export function backToStartArray(finishNode) {
-  const path = [];
-  let node = finishNode;
-  while (node.prevNode !== undefined) {
-    path.push(node);
-    node = node.prevNode;
-  }
-  return path;
-}
-
 export function dijkstra(array1, start, end) {
   const arrayBufor = array1.slice();
   const flatArray = arrayBufor.flat();
   arrayBufor[start.y][start.x].distance = 0;
 
-  const VisitedArray = [];
+  const visitedArray = [];
   const unVisitedArray = flatArray;
 
   sortArrayByDistance(unVisitedArray);
@@ -24,10 +14,11 @@ export function dijkstra(array1, start, end) {
   while (unVisitedArray.length) {
     sortArrayByDistance(unVisitedArray);
     currentPos = unVisitedArray.shift();
+
     if (currentPos.distance === Infinity) {
-      return VisitedArray;
+      return visitedArray;
     }
-    VisitedArray.push(currentPos);
+    visitedArray.push(currentPos);
     arrayBufor[currentPos.y][currentPos.x].isVisited = true;
     if (
       arrayBufor[currentPos.y][currentPos.x].isWall === true &&
@@ -36,30 +27,31 @@ export function dijkstra(array1, start, end) {
       continue;
 
     if (currentPos.isTarget) {
-      return VisitedArray;
+      return visitedArray;
     }
     neighbours = getNeighbours(currentPos, arrayBufor);
   }
 }
 
-const sortArrayByDistance = (array) => {
-  array.sort((a, b) => a.distance - b.distance);
+export const sortArrayByDistance = (grid) => {
+  grid.sort((a, b) => a.distance - b.distance);
 };
 
-const getNeighbours = (obj, array) => {
+export const getNeighbours = (cell, grid) => {
   const neighbours = [];
+  const { y, x } = cell;
 
-  if (obj.y < array.length - 1) {
-    neighbours.push(array[obj.y + 1][obj.x]);
+  if (y < grid.length - 1) {
+    neighbours.push(grid[y + 1][x]);
   }
-  if (obj.x > 0) {
-    neighbours.push(array[obj.y][obj.x - 1]);
+  if (x > 0) {
+    neighbours.push(grid[y][x - 1]);
   }
-  if (obj.y > 0) {
-    neighbours.push(array[obj.y - 1][obj.x]);
+  if (y > 0) {
+    neighbours.push(grid[y - 1][x]);
   }
-  if (obj.x < array[obj.y].length - 1) {
-    neighbours.push(array[obj.y][obj.x + 1]);
+  if (x < grid[y].length - 1) {
+    neighbours.push(grid[y][x + 1]);
   }
 
   const neighboursFiltered = neighbours.filter(
@@ -67,9 +59,19 @@ const getNeighbours = (obj, array) => {
   );
 
   for (const item of neighboursFiltered) {
-    array[item.y][item.x].distance = obj.distance + 1;
-    array[item.y][item.x].prevNode = obj;
+    grid[item.y][item.x].distance = cell.distance + 1;
+    grid[item.y][item.x].prevNode = cell;
   }
 
   return neighboursFiltered;
 };
+
+export function getPathFromFinishNode(finishNode) {
+  const path = [];
+  let node = finishNode;
+  while (node.prevNode !== undefined) {
+    path.push(node);
+    node = node.prevNode;
+  }
+  return path;
+}

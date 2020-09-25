@@ -1,13 +1,14 @@
 import React from "react";
-import "./App.css";
-import PathFinder from "./Components/PathFinder";
+import Main from "Components/Main";
 import "bulma/css/bulma.css";
-import "./PathFinder.css";
+import "./css/PathFinder.css";
 
 function App() {
   return (
     <div className="App">
-      <PathFinder />
+      <header className="App-header">
+        <Main />
+      </header>
     </div>
   );
 }

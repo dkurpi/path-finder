@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
+import React from "react";
 import cx from "classnames";
 
 const Position = React.forwardRef((props, ref) => {
-  const { x, y, properties: obj, targetPosition, wasAnimated } = props;
+  const { x, y, properties: obj, handleCellClick, wasAnimated } = props;
 
   const clName = cx({
     pole: true,
@@ -22,9 +22,9 @@ const Position = React.forwardRef((props, ref) => {
   return (
     <div
       className="poleContainer"
-      onMouseEnter={() => targetPosition(y, x)}
+      onMouseEnter={() => handleCellClick(y, x)}
       onMouseDown={() => {
-        targetPosition(y, x, true);
+        handleCellClick(y, x, true);
       }}
     >
       <div ref={ref} className={clName}></div>
