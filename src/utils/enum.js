@@ -1,6 +1,6 @@
-export { lastPressed };
+export { lastPressedEnum };
 
-const lastPressed = {
+const lastPressedEnum = {
   startPosition: "startPosition",
   endPosition: "endPosition",
 };

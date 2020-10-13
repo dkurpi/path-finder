@@ -9,7 +9,7 @@ import initGrid from "utils/initGrid";
 import PATTERN_01 from "utils/PATTERN_01.js";
 import generateMaze from "utils/generateMaze.js";
 import sortGridByDistanceToCenter from "utils/sortGridByDistanceToCenter.js";
-import { lastPressed } from "utils/enum.js";
+import { lastPressedEnum } from "utils/enum.js";
 
 export default class Grid extends Component {
   state = {
@@ -18,7 +18,7 @@ export default class Grid extends Component {
     columns: 31,
     startPosition: { x: 21, y: 14 },
     endPosition: { x: 41, y: 29 },
-    lastPressed: lastPressed.startPosition,
+    lastPressed: lastPressedEnum.startPosition,
 
     isLoaded: false,
     isAnimationStarted: false,
@@ -139,9 +139,9 @@ export default class Grid extends Component {
       this.saveUserPattern(x, y);
     } else {
       const lastPressed = node.isTarget
-        ? lastPressed.endPosition
+        ? lastPressedEnum.endPosition
         : node.isStart
-        ? lastPressed.startPosition
+        ? lastPressedEnum.startPosition
         : this.state.lastPressed;
 
       this.setState(
