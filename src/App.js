@@ -1,6 +1,8 @@
 import React from "react";
 import Main from "Components/Main";
-import "bulma/css/bulma.css";
+import "./css/path-finder.css";
+import "./css/menu.css";
+import "./css/keyframes.css";
 
 function App() {
   return (

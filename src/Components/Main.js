@@ -3,9 +3,6 @@ import Actions from "Components/Actions.js";
 import Button from "Components/Button.js";
 import Position from "Components/Position.js";
 
-import "../css/pathFinder.css";
-import "../css/menu.css";
-
 import { dijkstra, getPathFromFinishNode } from "utils/algoritms";
 import getClassName from "utils/getClassName";
 import initGrid from "utils/initGrid";
@@ -38,7 +35,7 @@ export default class Grid extends Component {
   refs = [];
   isPressed = false;
   pattern = [];
-  speed = 4;
+  speed = 2;
 
   componentDidMount() {
     this.createGrid();

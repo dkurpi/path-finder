@@ -63,7 +63,7 @@ export default function Actions({
           disabled={isProgress}
         />
       </IconButton>
-      <IconButton component="span">
+      <IconButton component="span" disabled={isProgress}>
         <FormControl
           style={{ width: "80px", heigth: "100% !important", color: "#ccc" }}
         >
@@ -86,10 +86,10 @@ export default function Actions({
             label="speed"
             style={{ width: "80px", heigth: "100% !important", color: "#ccc" }}
           >
-            <MenuItem value={0.7}>Super Fast</MenuItem>
-            <MenuItem value={1.5}>Fast</MenuItem>
-            <MenuItem value={4}>Middle</MenuItem>
-            <MenuItem value={8}>Slow</MenuItem>
+            <MenuItem value={0.5}>Super Fast</MenuItem>
+            <MenuItem value={1}>Fast</MenuItem>
+            <MenuItem value={2}>Middle</MenuItem>
+            <MenuItem value={3}>Slow</MenuItem>
           </Select>
         </FormControl>
       </IconButton>
