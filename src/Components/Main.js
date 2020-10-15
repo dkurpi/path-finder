@@ -11,18 +11,18 @@ import generateMaze from "utils/generateMaze.js";
 import sortGridByDistanceToCenter from "utils/sortGridByDistanceToCenter.js";
 import { lastPressedEnum } from "utils/enum.js";
 import StartPopup from "Components/StartPopup";
+
 import BlurOnIcon from "@material-ui/icons/BlurOn"; //pattern
-
-
-import AccountTreeIcon from "@material-ui/icons/AccountTree"; 
+import AccountTreeIcon from "@material-ui/icons/AccountTree";
+import { CgPathOutline } from "react-icons/cg";
 
 export default class Grid extends Component {
   state = {
     array: [],
     rows: 73,
     columns: 31,
-    startPosition: { x: 21, y: 14 },
-    endPosition: { x: 41, y: 29 },
+    startPosition: { x: 15, y: 16 },
+    endPosition: { x: 61, y: 16 },
     lastPressed: lastPressedEnum.startPosition,
 
     isLoaded: false,
@@ -94,7 +94,7 @@ export default class Grid extends Component {
       else
         setTimeout(() => {
           visitedAnimation(i);
-        }, 1000 + 2 * i);
+        }, 1000 + 15 * i);
     }
   }
 
@@ -122,7 +122,7 @@ export default class Grid extends Component {
       } else
         setTimeout(() => {
           pathAnimation(i);
-        }, 15 * i);
+        }, 2000 + 100 * i);
     }
     this.setState({
       wasAnimated: true,
@@ -205,7 +205,7 @@ export default class Grid extends Component {
         if (cordinates.length - 1 === i) {
           this.setState({ isAnimationProgress: false, array });
         }
-      }, 1000 + 5 * i);
+      }, 1000 + 15 * i);
     }
   };
 
@@ -262,7 +262,7 @@ export default class Grid extends Component {
       <>
         <div className="menu">
           <section className="menu__section">
-            <BlurOnIcon classes={{ root: "menu__mainIcon" }} />
+            <CgPathOutline className="menu__mainIcon" />
             <h1 className="menu__title">MazeGenerator</h1>
             <div className={"menu__select"}>
               <Button
