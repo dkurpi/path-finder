@@ -1,6 +1,84 @@
 .menu {
-  margin: 2em 0;
+  display: flex;
+  width: 80%;
+  margin: 0.6em 0.4em 0;
 }
+.menu__section {
+  padding: 0.5em 2em 0;
+  width: 33%;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.menu__and {
+  color: #63708b;
+  font-family: montserrat;
+  user-select: none;
+  text-transform: uppercase;
+  font-size: 96px;
+  font-weight: 200;
+}
+
+.menu__button {
+  background: transparent;
+  border: none;
+  color: #dbe4f5;
+  border: 1px solid #c2cce0;
+  padding: 0.8em 1em;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+.menu__button:hover {
+  background: #63708b;
+  color: #ffffff;
+}
+.menu__button:focus {
+  background: transparent;
+  outline: inherit;
+  border: 1px solid transparent;
+  transition: 0.3s;
+}
+.menu__button--danger {
+  color: rgb(224, 108, 108);
+  border: none;
+  border: 1px solid transparent;
+}
+.menu__button--danger:hover {
+  background: rgb(236, 95, 95);
+  color: #ffffff;
+}
+
+.menu__title {
+  font-size: 18px;
+  font-family: montserrat;
+  text-transform: uppercase;
+  user-select: none;
+  color: #dbdbdb;
+  letter-spacing: 1px;
+}
+.button__icon {
+  font-size: 48px !important;
+  color: rgb(11, 221, 57) !important;
+}
+
+.button__icon--white {
+  font-size: 48px !important;
+  color: rgb(255, 255, 255) !important;
+}
+.button__icon--delete {
+  color: rgb(255, 0, 0) !important;
+}
+.button__icon--disabled {
+  opacity: 0.5;
+}
+
+.menu__mainIcon {
+  font-size: 48px !important;
+  color: rgb(255, 255, 255) !important;
+}
+
 .gridContainer {
   display: flex;
   width: 1825px;
@@ -30,24 +108,36 @@
 }
 
 .target {
-  background-color: red !important;;
+  background-color: red !important;
   transition: 0.2s;
   color: white;
   position: relative;
   z-index: 999;
+  animation: point 4s ease-in-out alternate infinite ;
 }
 
 .start {
   background-color: rgb(50, 255, 50) !important;
   position: relative;
   z-index: 999;
+  animation: point 2s ease-in-out infinite;
 }
 
+@keyframes point {
+  0% {
+    transform: rotate(0);
+  }
+  60% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
-/* /////////////////////////////////////////////////////////////////////////////////// */
 .visited {
   background-color: rgba(2, 255, 36, 0.205);
-  animation: visited .9s ease-in-out;
+  animation: visited 0.9s ease-in-out;
 }
 
 .path {
@@ -58,7 +148,7 @@
 .wall {
   background-color: rgba(255, 255, 255, 0.822);
   transform: scale(1);
-  animation: wall .7s ease-in-out;
+  animation: wall 0.7s ease-in-out;
   position: relative;
   z-index: 90;
 }
@@ -81,6 +171,10 @@
   z-index: 99;
   transform: scale(1.4);
 }
+button {
+  margin: 1em 2px !important;
+}
+
 @keyframes wall {
   0% {
     transform: scale(0.3);
@@ -115,7 +209,6 @@
   50% {
     background-color: rgba(217, 255, 0, 0.932);
     transform: scale(1);
-
   }
   70% {
     background-color: rgba(2, 255, 36, 0.555);
@@ -145,5 +238,27 @@
 
   100% {
     transform: scale(1);
+  }
+}
+
+.intro {
+  position: absolute;
+  bottom: 35vh;
+  left: 50%;
+  transform: translate(-50%, 0);
+  pointer-events: none;
+}
+
+.intro__cursor {
+  font-size: 108px;
+  animation: cursor 0.5s ease-out infinite alternate;
+}
+
+@keyframes cursor {
+  from {
+    transform: rotate(-10deg);
+  }
+  to {
+    transform: rotate(0);
   }
 }

@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import Menu from "Components/Menu.js";
+import Actions from "Components/Actions.js";
 import Button from "Components/Button.js";
 import Position from "Components/Position.js";
 
@@ -10,6 +10,11 @@ import PATTERN_01 from "utils/PATTERN_01.js";
 import generateMaze from "utils/generateMaze.js";
 import sortGridByDistanceToCenter from "utils/sortGridByDistanceToCenter.js";
 import { lastPressedEnum } from "utils/enum.js";
+import StartPopup from "Components/StartPopup";
+import BlurOnIcon from "@material-ui/icons/BlurOn"; //pattern
+
+
+import AccountTreeIcon from "@material-ui/icons/AccountTree"; 
 
 export default class Grid extends Component {
   state = {
@@ -186,7 +191,7 @@ export default class Grid extends Component {
   };
 
   setWalls = (cordinates, isWallCordinates = true) => {
-    this.setState({ isAnimationProgress: true });
+    this.setState({ isAnimationProgress: true, isAnimationStarted: false });
     this.createGrid();
     const array = this.grid;
     !isWallCordinates && this.modifyGrid("isWall", true, array);
@@ -255,68 +260,86 @@ export default class Grid extends Component {
 
     return (
       <>
-        <Menu
-          handleRunButton={this.handleRunButton}
-          clear={() => {
-            this.handleResetAnimation(isAnimationProgress, this.createGrid);
-          }}
-          clearAll={() => {
-            this.handleResetAnimation(isAnimationProgress);
-          }}
-        />
+        <div className="menu">
+          <section className="menu__section">
+            <BlurOnIcon classes={{ root: "menu__mainIcon" }} />
+            <h1 className="menu__title">MazeGenerator</h1>
+            <div className={"menu__select"}>
+              <Button
+                className="menu__button"
+                text={"Generate random maze"}
+                disable={isAnimationProgress}
+                clickFcn={() => {
+                  this.clearAnimated();
+                  const mazeWalls = generateMaze(columns, rows);
+                  this.setWalls(
+                    sortGridByDistanceToCenter(mazeWalls, columns, rows),
+                    true
+                  );
+                }}
+              />
+              <Button
+                className="menu__button"
+                text={"Generate random walls"}
+                disable={isAnimationProgress}
+                clickFcn={() => {
+                  this.clearAnimated();
+                  const mazeWalls = generateMaze(columns, rows);
+                  this.setWalls(mazeWalls, true);
+                }}
+              />
+            </div>
+          </section>
 
-        <div>
-          <Button
-            className="button is-light"
-            text={"Render Random Maze"}
-            disable={isAnimationProgress}
-            clickFcn={() => {
-              this.clearAnimated();
-              const mazeWalls = generateMaze(columns, rows);
-              this.setWalls(
-                sortGridByDistanceToCenter(mazeWalls, columns, rows),
-                true
-              );
-            }}
-          />
+          <section className="menu__section">
+            <AccountTreeIcon classes={{ root: "menu__mainIcon" }} />
 
-          <Button
-            className="button is-light"
-            text={"Render Random Walls"}
-            disable={isAnimationProgress}
-            clickFcn={() => {
-              this.clearAnimated();
-              const mazeWalls = generateMaze(columns, rows);
-              this.setWalls(mazeWalls, true);
-            }}
-          />
+            <h1 className="menu__title">PathFinder</h1>
+            <Actions
+              handleRunButton={this.handleRunButton}
+              clear={() => {
+                this.handleResetAnimation(isAnimationProgress, this.createGrid);
+              }}
+              clearAll={() => {
+                this.handleResetAnimation(isAnimationProgress);
+              }}
+              isStarted={this.state.isAnimationStarted}
+              isProgress={this.state.isAnimationProgress}
+            />
+          </section>
+          <section className="menu__section">
+            <BlurOnIcon classes={{ root: "menu__mainIcon" }} />
+            <h1 className="menu__title">Patterns</h1>
 
-          <Button
-            className="button is-light"
-            text={` Render Your Pattern (${this.pattern.length})`}
-            disable={isAnimationProgress || this.pattern.length === 0}
-            clickFcn={() => {
-              this.clearAnimated();
-              this.setWalls(this.pattern);
-            }}
-          />
-          <Button
-            className="button is-danger"
-            text={`delete your pattern`}
-            disable={isAnimationProgress || this.pattern.length === 0}
-            clickFcn={() => {
-              this.pattern = [];
-            }}
-          />
-          <Button
-            className="button is-light"
-            text={"Render Pattern"}
-            disable={isAnimationProgress}
-            clickFcn={() => {
-              this.clearAnimated();
-              this.setWalls(PATTERN_01);
-            }}
-          />
+            <div className={"menu__select"}>
+              <Button
+                className="menu__button"
+                text={"Pattern"}
+                disable={isAnimationProgress}
+                clickFcn={() => {
+                  this.clearAnimated();
+                  this.setWalls(PATTERN_01);
+                }}
+              />
+              <Button
+                className="menu__button"
+                text={` Your Pattern (${this.pattern.length})`}
+                disable={isAnimationProgress || this.pattern.length === 0}
+                clickFcn={() => {
+                  this.clearAnimated();
+                  this.setWalls(this.pattern);
+                }}
+              />
+              <Button
+                className="menu__button menu__button--danger"
+                text={`delete your pattern`}
+                disable={isAnimationProgress || this.pattern.length === 0}
+                clickFcn={() => {
+                  this.pattern = [];
+                }}
+              />
+            </div>
+          </section>
         </div>
 
         <div
@@ -349,6 +372,7 @@ export default class Grid extends Component {
             ))
           )}
         </div>
+        {!this.pattern.length && <StartPopup />}
       </>
     );
   }
