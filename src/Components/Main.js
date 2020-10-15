@@ -1,7 +1,10 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 import Actions from "Components/Actions.js";
 import Button from "Components/Button.js";
 import Position from "Components/Position.js";
+
+import "../css/pathFinder.css";
+import "../css/menu.css";
 
 import { dijkstra, getPathFromFinishNode } from "utils/algoritms";
 import getClassName from "utils/getClassName";
@@ -12,7 +15,7 @@ import sortGridByDistanceToCenter from "utils/sortGridByDistanceToCenter.js";
 import { lastPressedEnum } from "utils/enum.js";
 import StartPopup from "Components/StartPopup";
 
-import BlurOnIcon from "@material-ui/icons/BlurOn"; //pattern
+import BlurOnIcon from "@material-ui/icons/BlurOn";
 import AccountTreeIcon from "@material-ui/icons/AccountTree";
 import { CgPathOutline } from "react-icons/cg";
 
@@ -35,6 +38,7 @@ export default class Grid extends Component {
   refs = [];
   isPressed = false;
   pattern = [];
+  speed = 4;
 
   componentDidMount() {
     this.createGrid();
@@ -50,7 +54,7 @@ export default class Grid extends Component {
     });
 
     this.refs = this.grid.map((row, indexRow) =>
-      row.map((properties, indexColumn) => React.createRef())
+      row.map(() => React.createRef())
     );
   };
 
@@ -72,7 +76,7 @@ export default class Grid extends Component {
 
   visitingAnimation(nodes, pathNodes) {
     const grid = [...this.state.array.slice()];
-
+    const { speed } = this.state;
     const visitedAnimation = (i) => {
       const { y, x } = nodes[i];
       const node = grid[y][x];
@@ -94,12 +98,13 @@ export default class Grid extends Component {
       else
         setTimeout(() => {
           visitedAnimation(i);
-        }, 1000 + 15 * i);
+        }, 1000 + speed * 7 * i);
     }
   }
 
   visitingPathAnimation = (pathNodes) => {
     const grid = [...this.state.array.slice()];
+    const { speed } = this.state;
     const pathAnimation = (i) => {
       const { y, x } = pathNodes[i];
       const pathNode = grid[y][x];
@@ -122,7 +127,7 @@ export default class Grid extends Component {
       } else
         setTimeout(() => {
           pathAnimation(i);
-        }, 2000 + 100 * i);
+        }, 2000 + speed * 30 * i);
     }
     this.setState({
       wasAnimated: true,
@@ -191,6 +196,7 @@ export default class Grid extends Component {
   };
 
   setWalls = (cordinates, isWallCordinates = true) => {
+    const { speed } = this.state;
     this.setState({ isAnimationProgress: true, isAnimationStarted: false });
     this.createGrid();
     const array = this.grid;
@@ -205,7 +211,7 @@ export default class Grid extends Component {
         if (cordinates.length - 1 === i) {
           this.setState({ isAnimationProgress: false, array });
         }
-      }, 1000 + 15 * i);
+      }, 1000 + speed * 7 * i);
     }
   };
 
@@ -244,6 +250,10 @@ export default class Grid extends Component {
     });
     this.clearAnimated();
     callback();
+  };
+
+  handleSpeed = (speed) => {
+    this.setState({ speed });
   };
 
   render() {
@@ -305,6 +315,7 @@ export default class Grid extends Component {
               }}
               isStarted={this.state.isAnimationStarted}
               isProgress={this.state.isAnimationProgress}
+              handleSpeed={this.handleSpeed}
             />
           </section>
           <section className="menu__section">
@@ -354,7 +365,7 @@ export default class Grid extends Component {
             this.isPressed = false;
             this.setState({ isPointPressed: false });
           }}
-          className="gridContainer"
+          className="grid-wrapper"
         >
           {array.map((row, indexRow) =>
             row.map((properties, indexColumn) => (

@@ -1,0 +1,21 @@
+.intro {
+  position: absolute;
+  bottom: 35vh;
+  left: 50%;
+  transform: translate(-50%, 0);
+  pointer-events: none;
+}
+
+.intro__cursor {
+  font-size: 108px;
+  animation: cursor 0.5s ease-out infinite alternate;
+}
+
+@keyframes cursor {
+  from {
+    transform: rotate(-10deg);
+  }
+  to {
+    transform: rotate(0);
+  }
+}

@@ -1,7 +1,6 @@
 import React from "react";
 import Main from "Components/Main";
 import "bulma/css/bulma.css";
-import "./css/PathFinder.css";
 
 function App() {
   return (

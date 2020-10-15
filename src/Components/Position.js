@@ -21,7 +21,7 @@ const Position = React.forwardRef((props, ref) => {
 
   return (
     <div
-      className="poleContainer"
+      className="pole-wrapper"
       onMouseEnter={() => handleCellClick(y, x)}
       onMouseDown={() => {
         handleCellClick(y, x, true);

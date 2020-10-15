@@ -1,0 +1,77 @@
+@keyframes wall {
+  0% {
+    transform: scale(0.3);
+  }
+  20% {
+    transform: scale(0.8);
+    background-color: rgb(253, 173, 0);
+  }
+  50% {
+    transform: scale(0.3);
+  }
+  70% {
+    transform: scale(1.2);
+    background-color: rgb(217, 255, 0);
+  }
+
+  100% {
+    background-color: rgba(255, 255, 255, 0.822);
+
+    transform: scale(1);
+  }
+}
+
+@keyframes visited {
+  0% {
+    transform: scale(0);
+  }
+  20% {
+    transform: scale(0.5);
+    background-color: rgb(253, 173, 0);
+  }
+  50% {
+    background-color: rgba(217, 255, 0, 0.932);
+    transform: scale(1);
+  }
+  70% {
+    background-color: rgba(2, 255, 36, 0.555);
+  }
+  100% {
+    background-color: rgba(2, 255, 36, 0.205);
+    transform: scale(1);
+  }
+}
+
+@keyframes pathAnimation {
+  0% {
+    transform: scale(0);
+    background-color: rgba(253, 173, 0, 0);
+  }
+  50% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(0.8);
+    background-color: rgb(217, 255, 0);
+  }
+  70% {
+    transform: scale(1.4);
+    background-color: rgb(217, 255, 0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes point {
+  0% {
+    transform: rotate(0);
+  }
+  60% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

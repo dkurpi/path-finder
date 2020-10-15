@@ -1,5 +1,6 @@
 import React from "react";
 import { HiCursorClick } from "react-icons/hi";
+import "../css/intro.css";
 
 export default function StartPopup() {
   return (
