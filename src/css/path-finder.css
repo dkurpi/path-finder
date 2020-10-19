@@ -1,16 +1,15 @@
 .grid-wrapper {
     display: flex;
-    width: 1825px;
-    height: 775px;
+    width: 1848px;
+    height: 744px;
     flex-wrap: wrap;
     justify-content: flex-start;
     align-content: flex-start;
-    background-color: #fff;
     background-color: #3c4352;
   }
   .pole-wrapper {
-    height: 25px;
-    width: 25px;
+    height: 24px;
+    width: 24px;
     font-size: 17px;
     color: rgb(107, 107, 107);
     line-height: 40px;

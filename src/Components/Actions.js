@@ -19,7 +19,7 @@ export default function Actions({
   isProgress,
   handleSpeed,
 }) {
-  const [speed, setSpeed] = useState("");
+  const [speed, setSpeed] = useState(2);
 
   return (
     <div className="menu__actions">
@@ -88,7 +88,7 @@ export default function Actions({
           >
             <MenuItem value={0.5}>Super Fast</MenuItem>
             <MenuItem value={1}>Fast</MenuItem>
-            <MenuItem value={2}>Middle</MenuItem>
+            <MenuItem value={2}>Mid</MenuItem>
             <MenuItem value={3}>Slow</MenuItem>
           </Select>
         </FormControl>

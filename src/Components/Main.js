@@ -19,7 +19,7 @@ import { CgPathOutline } from "react-icons/cg";
 export default class Grid extends Component {
   state = {
     array: [],
-    rows: 73,
+    rows: 77,
     columns: 31,
     startPosition: { x: 15, y: 16 },
     endPosition: { x: 61, y: 16 },
@@ -30,12 +30,12 @@ export default class Grid extends Component {
     isAnimationProgress: false,
     wasAnimated: false,
     isPointPressed: false,
+    speed: 1.5,
   };
   grid = [];
   refs = [];
   isPressed = false;
   pattern = [];
-  speed = 2;
 
   componentDidMount() {
     this.createGrid();
@@ -124,7 +124,7 @@ export default class Grid extends Component {
       } else
         setTimeout(() => {
           pathAnimation(i);
-        }, 2000 + speed * 30 * i);
+        }, 1000 + speed * 30 * i);
     }
     this.setState({
       wasAnimated: true,

@@ -1,10 +1,10 @@
 .menu {
   display: flex;
-  width: 80%;
-  margin: 0.6em 0.4em 0;
+  width: 90%;
+  margin: 0.3em 0.4em 0.2em;
 }
 .menu__section {
-  padding: 0.5em 2em 0;
+  padding: 0em 2em;
   width: 33%;
   flex-grow: 1;
   align-items: center;
@@ -55,7 +55,7 @@
   font-family: montserrat;
   text-transform: uppercase;
   user-select: none;
-  color: #dbdbdb;
+  color: #ececec;
   letter-spacing: 1px;
 }
 .menu__mainIcon {
